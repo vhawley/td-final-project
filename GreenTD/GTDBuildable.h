@@ -1,11 +1,12 @@
 #include <iostream>
 #include <string>
 #include <SDL.h>
+#include "GTDUnit.h"
 
-class GTDBuildable
+class GTDBuildable : public GTDUnit 
 {
 public:
-
+	GTDBuildable();
 private:
 
 };
