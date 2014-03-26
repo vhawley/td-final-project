@@ -3,6 +3,8 @@
 GTDPlayer::GTDPlayer()
 {
 	over = 0;
+	lastkey = "NULL";
+	mouseHold = false;
 }
 
 int GTDPlayer::getOver()
@@ -17,11 +19,27 @@ void GTDPlayer::processInput()
 		{
 			case SDL_KEYDOWN:
 				key = SDL_GetKeyName(e.key.keysym.sym);
-				std::cout << "Key pressed: " << key << std::endl;
+
+				if (!strcmp(key, lastkey))
+				{
+					std::cout << "Holding: " << key << std::endl;
+				}
+				else
+				{
+					std::cout << "Key pressed: " << key << std::endl;
+					if (!strcmp(key, "B"))
+					{
+						std::cout << "Build mode..." << std::endl;
+						building = 1;
+					}
+					lastkey = key;
+				}
+				
 				break;
 			case SDL_KEYUP:
 				key = SDL_GetKeyName(e.key.keysym.sym);
 				std::cout << "Key released: " << key << std::endl;
+				lastkey = "NULL";
 				if (!strcmp(key, "Q"))
 				{
 					over = 1;
@@ -32,6 +50,8 @@ void GTDPlayer::processInput()
 				{
 					case SDL_BUTTON_LEFT:
 						std::cout << "Mouse1 Pressed" << std::endl;
+						SDL_GetMouseState(&oldMouseX, &oldMouseY);
+						mouseHold = true;
 						break;
 					case SDL_BUTTON_RIGHT:
 						std::cout << "Mouse2 Pressed" << std::endl;
@@ -52,6 +72,7 @@ void GTDPlayer::processInput()
 				{
 				case SDL_BUTTON_LEFT:
 					std::cout << "Mouse1 Released" << std::endl;
+					mouseHold = false;
 					break;
 				case SDL_BUTTON_RIGHT:
 					std::cout << "Mouse2 Released" << std::endl;
@@ -71,4 +92,18 @@ void GTDPlayer::processInput()
 				break;
 		}
 	}
+}
+
+bool GTDPlayer::isHoldingMouse()
+{
+	return mouseHold;
+}
+
+int GTDPlayer::getOldMouseX()
+{
+	return oldMouseX;
+}
+int GTDPlayer::getOldMouseY()
+{
+	return oldMouseY;
 }

@@ -38,12 +38,11 @@ void GTDGame::run()
 	//Default color = black
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
-	screenX = 800; //initial screen position
-	screenY = 400;
+	screenX = (map.getMapW() * map.getTileW() - S_WIDTH) / 2; //initial screen position
+	screenY = (map.getMapH() * map.getTileH() - S_HEIGHT) / 2;
 
 	SDL_Rect mouseRect;
-	mouseRect.w = 8;
-	mouseRect.h = 8;
+
 
 	GTDTimer fps;
 	fps.start();
@@ -51,26 +50,37 @@ void GTDGame::run()
 
 	while (!IsGameOver)
 	{
-		//draw some stuff
+		//clear renderer
 		SDL_RenderClear(renderer);
-
-		
-		map.draw(screenX, screenY, renderer);
-
-		SDL_GetMouseState(&mouseRect.x, &mouseRect.y);
-
-		mouseRect.x -= (mouseRect.w / 2); //Offset for center of square
-		mouseRect.y -= (mouseRect.h / 2); //Offset for center of square
-
-		//SDL_RenderCopy(renderer, textures.at(2), NULL, &mouseRect);
-		SDL_RenderPresent(renderer);
 
 		//handle input
 		player.processInput();
 
-		//recalculate
-		
+		//get mouse state
 		SDL_GetMouseState(&mouseX, &mouseY);
+
+		//Draw map and mouse rect if necessary
+		map.draw(screenX, screenY, renderer);
+		if (player.isHoldingMouse())
+		{
+
+			std::cout << "Should be drawing mouse rect..." << std::endl;
+			mouseRect.x = std::min(mouseX,player.getOldMouseX());
+			mouseRect.y = std::min(mouseY,player.getOldMouseY());
+			mouseRect.w = std::abs(mouseX - player.getOldMouseX());
+			mouseRect.h = std::abs(mouseY - player.getOldMouseY());
+			std::cout << mouseRect.x << " " << mouseRect.y << " " << mouseRect.w << " " << mouseRect.h << std::endl;
+			if (SDL_RenderDrawRect(renderer, &mouseRect))
+			{
+				std::cout << "ERROR drawing mouserect: " << SDL_GetError() << std::endl;
+			}
+		}
+		
+
+		//Present Contents to screen
+		SDL_RenderPresent(renderer);
+
+
 		if (mouseX < 5)
 		{
 			screenX = std::max(0, screenX - 2);
