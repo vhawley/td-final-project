@@ -61,21 +61,40 @@ void GTDGame::run()
 
 		//Draw map and mouse rect if necessary
 		map.draw(screenX, screenY, renderer);
-		if (player.isHoldingMouse())
+		if (player.isHoldingMouse() && !player.isBuilding())
 		{
-
+			SDL_SetRenderDrawColor(renderer, 0, 255, 0, 1);
 			std::cout << "Should be drawing mouse rect..." << std::endl;
 			mouseRect.x = std::min(mouseX,player.getOldMouseX());
 			mouseRect.y = std::min(mouseY,player.getOldMouseY());
 			mouseRect.w = std::abs(mouseX - player.getOldMouseX());
 			mouseRect.h = std::abs(mouseY - player.getOldMouseY());
 			std::cout << mouseRect.x << " " << mouseRect.y << " " << mouseRect.w << " " << mouseRect.h << std::endl;
-			if (SDL_RenderDrawRect(renderer, &mouseRect))
+			if (mouseRect.w > 0 && mouseRect.h > 0)
 			{
-				std::cout << "ERROR drawing mouserect: " << SDL_GetError() << std::endl;
+				if (SDL_RenderDrawRect(renderer, &mouseRect))
+				{
+					std::cout << "ERROR drawing mouserect: " << SDL_GetError() << std::endl;
+				}
 			}
+			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 1);
 		}
-		
+		//Draw blue rect on current tile if building
+		if (player.isBuilding())
+		{
+			int btileX = std::floor(mouseX / map.getTileW()) * map.getTileW();
+			int btileY = std::floor(mouseY / map.getTileH()) * map.getTileH();
+			int btileDeltaX = screenX % map.getTileW();
+			int btileDeltaY = screenY % map.getTileH();
+			SDL_Rect buildingRect;
+			buildingRect.x = btileX-btileDeltaX;
+			buildingRect.y = btileY-btileDeltaY;
+			buildingRect.w = map.getTileW(); //Times building width when building is implemented
+			buildingRect.h = map.getTileH(); //times building height when building is implemented
+			SDL_SetRenderDrawColor(renderer, 0, 0, 255, 1);
+			SDL_RenderFillRect(renderer, &buildingRect);
+			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 1);
+		}
 
 		//Present Contents to screen
 		SDL_RenderPresent(renderer);

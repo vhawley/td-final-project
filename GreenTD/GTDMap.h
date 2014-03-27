@@ -21,6 +21,7 @@ public:
 	int getMapH();
 	int getTileW();
 	int getTileH();
+
 	~GTDMap();
 private:
 	int initialized;

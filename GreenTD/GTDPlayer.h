@@ -11,6 +11,7 @@ public:
 	void processInput();
 	int getOver();
 	bool isHoldingMouse();
+	bool isBuilding();
 	int getOldMouseX();
 	int getOldMouseY();
 private:

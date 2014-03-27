@@ -122,13 +122,13 @@ bool GTDMap::loadTextures(SDL_Renderer *renderer)
 
 	SDL_FreeSurface(grassBMP);
 
-	//Load rorange bitmap
-	SDL_Surface *rorangeBMP = SDL_LoadBMP("./assets/bmp/rorange.bmp");
+	//Load sidewalk bitmap
+	SDL_Surface *sidewalk = SDL_LoadBMP("./assets/bmp/sidewalk.bmp");
 
 	//Create rorange texture
-	textures.push_back(SDL_CreateTextureFromSurface(renderer, rorangeBMP));
+	textures.push_back(SDL_CreateTextureFromSurface(renderer, sidewalk));
 
-	SDL_FreeSurface(rorangeBMP);
+	SDL_FreeSurface(sidewalk);
 
 	//Load blue bitmap
 	SDL_Surface *blueBMP = SDL_LoadBMP("./assets/bmp/blue.bmp");

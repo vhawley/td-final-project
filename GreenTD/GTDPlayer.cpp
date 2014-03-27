@@ -33,6 +33,12 @@ void GTDPlayer::processInput()
 						building = 1;
 					}
 					lastkey = key;
+					if (!strcmp(key, "C"))
+					{
+						std::cout << "Build mode off..." << std::endl;
+						building = 0;
+					}
+					lastkey = key;
 				}
 				
 				break;
@@ -73,9 +79,15 @@ void GTDPlayer::processInput()
 				case SDL_BUTTON_LEFT:
 					std::cout << "Mouse1 Released" << std::endl;
 					mouseHold = false;
+					if (building)
+					{
+						//Begin building
+						building = false;
+					}
 					break;
 				case SDL_BUTTON_RIGHT:
 					std::cout << "Mouse2 Released" << std::endl;
+					//Issue attack?
 					break;
 				case SDL_BUTTON_MIDDLE:
 					std::cout << "Mouse3 Released" << std::endl;
@@ -97,6 +109,10 @@ void GTDPlayer::processInput()
 bool GTDPlayer::isHoldingMouse()
 {
 	return mouseHold;
+}
+bool GTDPlayer::isBuilding()
+{
+	return building;
 }
 
 int GTDPlayer::getOldMouseX()
