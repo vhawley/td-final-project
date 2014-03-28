@@ -55,8 +55,8 @@ bool GTDMap::init(char *filename, SDL_Renderer *renderer)
 		}
 		mapW = wCounter;
 		mapH = hCounter;
-		tileW = 16;
-		tileH = 16;
+		tileW = 32;
+		tileH = 32;
 		loadTextures(renderer);
 		initialized = 1;
 		printMapBoard();
@@ -193,6 +193,18 @@ int GTDMap::getTileW()
 int GTDMap::getTileH()
 {
 	return tileH;
+}
+
+bool rectContainsUnit(GTDRect rect, GTDUnit unit)
+{
+	if (unit.getPosX() >= rect.getX() &&
+		unit.getPosX() <= (rect.getX() + rect.getW()) &&
+		unit.getPosY() >= rect.getY() &&
+		unit.getPosY() >= (rect.getY() + rect.getH()))
+	{
+		return true;
+	}
+	return false;
 }
 
 GTDMap::~GTDMap()

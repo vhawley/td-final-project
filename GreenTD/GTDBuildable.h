@@ -3,6 +3,9 @@
 #include <SDL.h>
 #include "GTDUnit.h"
 
+#ifndef GTDBUILDABLE_H
+#define GTDBUILDABLE_H
+
 class GTDBuildable : public GTDUnit 
 {
 public:
@@ -10,3 +13,5 @@ public:
 private:
 
 };
+
+#endif

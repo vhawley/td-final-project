@@ -3,6 +3,8 @@
 #include <vector>
 #include <SDL.h>
 
+#ifndef GTDPLAYER_H
+#define GTDPLAYER_H
 
 class GTDPlayer
 {
@@ -23,4 +25,7 @@ private:
 	int oldMouseX;
 	int oldMouseY;
 	int over;
+	int money;
 };
+
+#endif

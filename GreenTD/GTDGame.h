@@ -7,6 +7,9 @@
 #include "GTDMap.h"
 #include "GTDTimer.h"
 
+#ifndef GTDGAME_H
+#define GTDGAME_H
+
 class GTDGame
 {
 public:
@@ -32,3 +35,5 @@ private:
 	GTDPlayer player;
 
 };
+
+#endif

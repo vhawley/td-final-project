@@ -5,6 +5,10 @@
 #include <algorithm>
 #include <SDL.h>
 #include "GTDRect.h"
+#include "GTDUnit.h"
+
+#ifndef GTDMAP_H
+#define GTDMAP_H
 
 class GTDMap
 {
@@ -21,7 +25,7 @@ public:
 	int getMapH();
 	int getTileW();
 	int getTileH();
-
+	bool rectContainsUnit(GTDRect rect, GTDUnit unit);
 	~GTDMap();
 private:
 	int initialized;
@@ -32,6 +36,10 @@ private:
 	int tileW;
 	int tileH;
 	std::vector<SDL_Texture *> textures;
+	std::vector<GTDUnit> units;
+	std::vector<GTDPlayer> players;
 	std::vector<GTDRect> rects;
 
 };
+
+#endif

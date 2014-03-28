@@ -1,6 +1,9 @@
 #include <iostream>
 #include <SDL.h>
 
+#ifndef GTDTIMER_H
+#define GTDTIMER_H
+
 class GTDTimer {
 public:
 	GTDTimer();
@@ -23,3 +26,5 @@ private:
 	bool paused;
 
 };
+
+#endif

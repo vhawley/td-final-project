@@ -3,12 +3,17 @@
 #include <SDL.h>
 #include "GTDPlayer.h"
 
+#ifndef GTDUNIT_H
+#define GTDUNIT_H
+
 using namespace std;
 
 class GTDUnit
 {
 public:
 	GTDUnit();
+	int getPosX();
+	int getPosY();
 private:
 	int posX;
 	int posY;
@@ -18,4 +23,10 @@ private:
 	int health;
 	int armor;
 	bool invuln;
+	int bounty;
+	int bountyrange;
+	int attackDMG;
+	int attackDMGRange;
 };
+
+#endif

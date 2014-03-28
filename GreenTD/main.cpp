@@ -17,7 +17,8 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		std::cout << "Could not initialize SDL. Exiting" << std::endl;
+		std::cout << "Could not initialize SDL or game. Exiting!" << std::endl;
+		return 1;
 	}
 	return 0;
 }
