@@ -57,7 +57,10 @@ bool GTDMap::init(char *filename, SDL_Renderer *renderer)
 		mapH = hCounter;
 		tileW = 32;
 		tileH = 32;
-		loadTextures(renderer);
+		if (!loadTextures(renderer))
+		{
+			return 0;
+		}
 		initialized = 1;
 		//printMapBoard();
 		return 1;
@@ -114,29 +117,17 @@ void GTDMap::printMapBoard()
 
 bool GTDMap::loadTextures(SDL_Renderer *renderer)
 {
-	//Load grass bitmap
-	SDL_Surface *grassBMP = SDL_LoadBMP("./assets/bmp/grass.bmp");
+	for (int i = 1; i < 170; i++)
+	{
+		char filepath[50];
+		sprintf_s(filepath, "./assets/bmp/%d.bmp", i);
+		SDL_Surface *BMP = SDL_LoadBMP(filepath);
 
-	//Create grass texture
-	textures.push_back(SDL_CreateTextureFromSurface(renderer, grassBMP));
+		//Create grass texture
+		textures.push_back(SDL_CreateTextureFromSurface(renderer, BMP));
 
-	SDL_FreeSurface(grassBMP);
-
-	//Load sidewalk bitmap
-	SDL_Surface *sidewalk = SDL_LoadBMP("./assets/bmp/sidewalk.bmp");
-
-	//Create rorange texture
-	textures.push_back(SDL_CreateTextureFromSurface(renderer, sidewalk));
-
-	SDL_FreeSurface(sidewalk);
-
-	//Load blue bitmap
-	SDL_Surface *blueBMP = SDL_LoadBMP("./assets/bmp/blue.bmp");
-
-	//Create blue texture
-	textures.push_back(SDL_CreateTextureFromSurface(renderer, blueBMP));
-
-	SDL_FreeSurface(blueBMP);
+		SDL_FreeSurface(BMP);
+	}
 
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
