@@ -59,7 +59,7 @@ bool GTDMap::init(char *filename, SDL_Renderer *renderer)
 		tileH = 32;
 		loadTextures(renderer);
 		initialized = 1;
-		printMapBoard();
+		//printMapBoard();
 		return 1;
 	}
 	else
