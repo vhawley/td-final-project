@@ -65,8 +65,8 @@ void GTDGame::run()
 		{
 			SDL_SetRenderDrawColor(renderer, 0, 255, 0, 1);
 			std::cout << "Should be drawing mouse rect..." << std::endl;
-			mouseRect.x = std::min(mouseX,player.getOldMouseX());
-			mouseRect.y = std::min(mouseY,player.getOldMouseY());
+			mouseRect.x = std::min(mouseX,player.getOldMouseX()); //min to allow box selection in all directions
+			mouseRect.y = std::min(mouseY,player.getOldMouseY());//min to allow box selection in all directions 
 			mouseRect.w = std::abs(mouseX - player.getOldMouseX());
 			mouseRect.h = std::abs(mouseY - player.getOldMouseY());
 			std::cout << mouseRect.x << " " << mouseRect.y << " " << mouseRect.w << " " << mouseRect.h << std::endl;
@@ -99,7 +99,7 @@ void GTDGame::run()
 		//Present Contents to screen
 		SDL_RenderPresent(renderer);
 
-
+		//Moves screen position based on mouse position
 		if (mouseX < 5)
 		{
 			screenX = std::max(0, screenX - 2);

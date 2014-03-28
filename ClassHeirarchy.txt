@@ -1,0 +1,9 @@
+GTDGame
+GTDMap (contains GTDRect, GTDUnit)
+GTDRect
+GTDPlayer
+GTDUnit ("contains" GTDPlayer* (owner))
+	GTDBuildable
+	GTDEnemy
+GTDProjectile
+GTDTimer

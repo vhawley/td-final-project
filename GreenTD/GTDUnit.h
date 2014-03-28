@@ -19,7 +19,7 @@ private:
 	int posY;
 	SDL_Texture *text;
 	string name;
-	GTDPlayer *owner;
+	GTDPlayer *owner; //Units must have an owner
 	int health;
 	int armor;
 	bool invuln;

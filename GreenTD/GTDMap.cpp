@@ -25,6 +25,8 @@ bool GTDMap::init(char *filename, SDL_Renderer *renderer)
 		int wCounter = 0;
 		bool haveWidth = false;
 		int hCounter = 0;
+
+		//Initial read to count lines
 		while (mapFile >> a)
 		{
 			if (!haveWidth)
@@ -39,12 +41,16 @@ bool GTDMap::init(char *filename, SDL_Renderer *renderer)
 		}
 		std::cout << "Width / height = " << wCounter << " / " << hCounter << std::endl;
 		mapBoard = new int *[hCounter];
+
+		//2d array based on counts from last read
 		for (int i = 0; i < hCounter; i++)
 		{
 			mapBoard[i] = new int[wCounter];
 		}
 		mapFile.close();
 		mapFile.open(filename);
+
+		//Actually load in contents to int array
 		for (int i = 0; i < hCounter; i++)
 		{
 			for (int j = 0; j < wCounter; j++)
@@ -120,10 +126,11 @@ bool GTDMap::loadTextures(SDL_Renderer *renderer)
 	for (int i = 1; i < 170; i++)
 	{
 		char filepath[50];
+		//Create filepath from i
 		sprintf_s(filepath, "./assets/bmp/%d.bmp", i);
+		//Load BMP from filepath
 		SDL_Surface *BMP = SDL_LoadBMP(filepath);
-
-		//Create grass texture
+		//Add BMP to textures vector
 		textures.push_back(SDL_CreateTextureFromSurface(renderer, BMP));
 
 		SDL_FreeSurface(BMP);
@@ -155,11 +162,14 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 
 	int textcount = 0;
 	tileRect.y = -tileDeltaY;
-	for (int i = std::max(tileY, 0); i < std::min(tileY + 48, getMapH()); i++)
+
+	//Loops through specific position in 2D array to draw only the textures needed
+	for (int i = std::max(tileY, 0); i < std::min(tileY + 48, getMapH()); i++) //Hardcoded tile length for now...
 	{
 		tileRect.x = -tileDeltaX;
-		for (int j = std::max(tileX, 0); j < std::min(tileX + 82, getMapW()); j++)
+		for (int j = std::max(tileX, 0); j < std::min(tileX + 82, getMapW()); j++) //Hardcoded tile length for now... should come up with better way
 		{
+			//Render texture based on index in array
 			SDL_RenderCopy(renderer, textures.at(getMapBoard(i, j)), NULL, &tileRect);
 			tileRect.x += tileRect.w;
 			textcount++;
@@ -185,6 +195,7 @@ int GTDMap::getTileH()
 {
 	return tileH;
 }
+
 
 bool rectContainsUnit(GTDRect rect, GTDUnit unit)
 {
