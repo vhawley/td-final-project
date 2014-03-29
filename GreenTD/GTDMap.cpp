@@ -123,11 +123,11 @@ void GTDMap::printMapBoard()
 
 bool GTDMap::loadTextures(SDL_Renderer *renderer)
 {
-	for (int i = 1; i < 170; i++)
+	for (int i = 1; i < 355; i++)
 	{
 		char filepath[50];
 		//Create filepath from i
-		sprintf_s(filepath, "./assets/bmp/%d.bmp", i);
+		sprintf_s(filepath, "./assets/terrain/%d.bmp", i);
 		//Load BMP from filepath
 		SDL_Surface *BMP = SDL_LoadBMP(filepath);
 		//Add BMP to textures vector
@@ -164,13 +164,22 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 	tileRect.y = -tileDeltaY;
 
 	//Loops through specific position in 2D array to draw only the textures needed
-	for (int i = std::max(tileY, 0); i < std::min(tileY + 48, getMapH()); i++) //Hardcoded tile length for now...
+	for (int i = std::max(tileY, 0); i < std::min(tileY + 24, getMapH()); i++) //Hardcoded tile length for now...
 	{
 		tileRect.x = -tileDeltaX;
-		for (int j = std::max(tileX, 0); j < std::min(tileX + 82, getMapW()); j++) //Hardcoded tile length for now... should come up with better way
+		for (int j = std::max(tileX, 0); j < std::min(tileX + 41, getMapW()); j++) //Hardcoded tile length for now... should come up with better way
 		{
 			//Render texture based on index in array
-			SDL_RenderCopy(renderer, textures.at(getMapBoard(i, j)), NULL, &tileRect);
+			int textureI = getMapBoard(i, j) - 1;
+			if (textureI < 1)
+			{
+				textureI = 1;
+			}
+			else if (textureI > 355)
+			{
+				textureI = 355;
+			}
+			SDL_RenderCopy(renderer, textures.at(textureI), NULL, &tileRect);
 			tileRect.x += tileRect.w;
 			textcount++;
 		}
@@ -215,5 +224,5 @@ GTDMap::~GTDMap()
 	{
 		SDL_DestroyTexture(textures.at(i));
 	}
-	free(mapBoard);
+	delete []mapBoard;
 }
