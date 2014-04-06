@@ -8,6 +8,7 @@
 class GTDRect
 {
 public:
+	GTDRect();
 	GTDRect(int newX, int newY, int newW, int newH);
 	void setX(int a);
 	void setY(int a);

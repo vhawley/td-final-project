@@ -76,16 +76,13 @@
     <ClCompile Include="GTDBuildable.cpp" />
     <ClCompile Include="GTDGame.cpp" />
     <ClCompile Include="GTDUnit.cpp" />
+    <ClCompile Include="GTDWaypointNode.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="GTDPlayer.cpp" />
     <ClCompile Include="GTDMap.cpp" />
     <ClCompile Include="GTDRect.cpp" />
     <ClCompile Include="GTDTimer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="assets\bmp\blue.bmp" />
-    <Image Include="assets\bmp\grass.bmp" />
-    <Image Include="assets\bmp\rorange.bmp" />
+    <ClCompile Include="GTDWaypoint.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GTDGame.h" />
@@ -95,6 +92,8 @@
     <ClInclude Include="GTDRect.h" />
     <ClInclude Include="GTDTimer.h" />
     <ClInclude Include="GTDUnit.h" />
+    <ClInclude Include="GTDWaypoint.h" />
+    <ClInclude Include="GTDWaypointNode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

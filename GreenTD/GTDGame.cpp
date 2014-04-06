@@ -44,12 +44,16 @@ void GTDGame::run()
 	SDL_Rect mouseRect;
 
 
-	GTDTimer fps;
-	fps.start();
-	int frames = 0;
+	GTDTimer tickTimer;
+	tickTimer.start();
+	int timeElapsed = 0;
 
 	while (!IsGameOver)
 	{
+		//Get time elapsed 
+		timeElapsed = tickTimer.getTicks();
+		tickTimer.start();
+
 		//clear renderer
 		SDL_RenderClear(renderer);
 
@@ -122,16 +126,18 @@ void GTDGame::run()
 		}
 		if (debug)
 		{
-			frames++;
-			if (fps.getTicks() > 1000)
+			if (timeElapsed == 0)
 			{
-				std::cout << "FPS : " << frames << std::endl;
-				std::cout << "screen: (" << screenX << ", " << screenY << ")" << std::endl;
-				frames = 0;
-				fps.start();
+				std::cout << "timeelapsed = 0" << std::endl;
+			}
+			else
+			{
+				double fps = 1000 / (double)timeElapsed;
+				std::cout << fps << " fps." << std::endl;
 			}
 		}
 	}
+	tickTimer.stop();
 	quit();
 }
 

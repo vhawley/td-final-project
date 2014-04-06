@@ -1,5 +1,13 @@
 #include "GTDRect.h"
 
+GTDRect::GTDRect()
+{
+	setX(0);
+	setY(0);
+	setW(0);
+	setH(0);
+}
+
 GTDRect::GTDRect(int newX, int newY, int newW, int newH)
 {
 	setX(newX);

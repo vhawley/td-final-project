@@ -39,17 +39,12 @@
     <ClCompile Include="GTDUnit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="assets\bmp\grass.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\bmp\blue.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\bmp\rorange.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <ClCompile Include="GTDWaypoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GTDWaypointNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GTDGame.h">
@@ -71,6 +66,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GTDUnit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GTDWaypoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GTDWaypointNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
