@@ -75,6 +75,7 @@
   <ItemGroup>
     <ClCompile Include="GTDBuildable.cpp" />
     <ClCompile Include="GTDGame.cpp" />
+    <ClCompile Include="GTDProjectile.cpp" />
     <ClCompile Include="GTDUnit.cpp" />
     <ClCompile Include="GTDWaypointNode.cpp" />
     <ClCompile Include="main.cpp" />
@@ -89,6 +90,7 @@
     <ClInclude Include="GTDPlayer.h" />
     <ClInclude Include="GTDBuildable.h" />
     <ClInclude Include="GTDMap.h" />
+    <ClInclude Include="GTDProjectile.h" />
     <ClInclude Include="GTDRect.h" />
     <ClInclude Include="GTDTimer.h" />
     <ClInclude Include="GTDUnit.h" />

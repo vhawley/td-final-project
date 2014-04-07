@@ -1,11 +1,10 @@
 //GTProjectile implementation
 
 #include <iostream>
-#include <SDL.h>
 #include "GTDProjectile.h"
-#include "GTDMap.h"
 
-GTDProjectile::GTDProjectile(int x, int y, int xd, int yd){
+GTDProjectile::GTDProjectile(int x, int y, int xd, int yd)
+{
 	//default constructor
 	
 	hitTarget = false;
@@ -15,17 +14,17 @@ GTDProjectile::GTDProjectile(int x, int y, int xd, int yd){
 	ydir = yd;
 	
 }
-void GTDProjectile::spawn{
-	
+void GTDProjectile::spawn()
+{
 	//creates a new instance of a GTDProjectile
 }
 
 void GTDProjectile::move(int x, int y){
 	//moves projectile in accordance to time
-	while(!hitTarget()){
+	while(!getHitTarget()){
 		//if next move (location + next) is not off map
 		//i.e. if getMapBoard(m, n) returns -1
-		if(getMapBoard(xcoord + xdir, ycood + ydir)){
+		if(map->getMapBoard(xcoord + xdir, ycoord + ydir)){
 			//if true, it can move forward
 			xcoord = xcoord + xdir;
 			ycoord = ycoord + ydir;
@@ -44,18 +43,18 @@ void GTDProjectile::die(){
 	//delete
 }
 
-bool GTDProjectile::hitTarget(){
+bool GTDProjectile::getHitTarget(){
 	//returns true if the projectile hit the target
-	bool hit;
+	bool hit = false;
 	//if next location == occupied, then hit = true;
 	
 	return hit;
 }
 
-int getXcoord(){
+int GTDProjectile::getXcoord(){
 	return xcoord;
 }
-int getYcoord(){
+int GTDProjectile::getYcoord(){
 	return ycoord;
 }
 
