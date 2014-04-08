@@ -13,7 +13,11 @@ public:
 	void processInput();
 	int getOver();
 	bool isHoldingMouse();
-	bool isBuilding();
+	void queueBuilding();
+	bool hasBuildingQueued();
+	int getCurrentlySelectedBuilding();
+	void endQueueBuilding();
+	bool isSelectingBuildLocation();
 	int getOldMouseX();
 	int getOldMouseY();
 private:
@@ -21,6 +25,8 @@ private:
 	const char *key;
 	const char *lastkey;
 	bool building;
+	int currentlySelectedBuilding;
+	bool buildingQueued;
 	bool mouseHold;
 	int oldMouseX;
 	int oldMouseY;

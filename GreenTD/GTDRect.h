@@ -5,6 +5,7 @@
 #ifndef GTDRECT_H
 #define GTDRECT_H
 
+
 class GTDRect
 {
 public:

@@ -2,8 +2,10 @@
 #include <string>
 #include <vector>
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <algorithm>    // std::max/min
 #include "GTDPlayer.h"
+#include "GTDUnit.h"
 #include "GTDMap.h"
 #include "GTDTimer.h"
 
@@ -20,8 +22,7 @@ public:
 private:
 	bool loadTextures();
 	int IsGameOver;
-	int debug = 1;
-
+	int debug = 0;
 	int mouseX;
 	int mouseY;
 	
@@ -33,7 +34,6 @@ private:
 
 	GTDMap map;
 	GTDPlayer player;
-
 };
 
 #endif

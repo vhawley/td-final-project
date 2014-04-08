@@ -30,9 +30,6 @@
     <ClCompile Include="GTDRect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GTDBuildable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GTDTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -54,9 +51,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GTDPlayer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GTDBuildable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GTDMap.h">

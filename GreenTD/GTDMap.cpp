@@ -185,7 +185,28 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 		}
 		tileRect.y += tileRect.h;
 	}
+	for (unsigned int uindex = 0; uindex < units.size(); uindex++)
+	{
+		if (units.at(uindex).getPosX() >(x - units.at(uindex).getCollision() / 2) &&
+			units.at(uindex).getPosX() < (x + 1280 + units.at(uindex).getCollision() / 2) &&
+			units.at(uindex).getPosY() > (y - units.at(uindex).getCollision() / 2) &&
+			units.at(uindex).getPosY() < (y + 720 + units.at(uindex).getCollision() / 2)) //only draw if in screen bounds
+		{
+			SDL_Rect unitRect;
+			unitRect.x = units.at(uindex).getPosX() - x;
+			unitRect.y = units.at(uindex).getPosY() - y;
+			unitRect.w = units.at(uindex).getCollision();
+			unitRect.h = units.at(uindex).getCollision();
+			SDL_RenderCopy(renderer, units.at(uindex).getTexture(), NULL, &unitRect);
+		}
+	}
 }
+
+void GTDMap::addUnit(GTDUnit *u, GTDPlayer *p)
+{
+	units.push_back(*u);
+}
+
 
 int GTDMap::getMapW()
 {

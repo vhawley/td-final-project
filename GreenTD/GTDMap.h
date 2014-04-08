@@ -6,6 +6,7 @@
 #include <SDL.h>
 #include "GTDRect.h"
 #include "GTDUnit.h"
+#include "GTDPlayer.h"
 
 #ifndef GTDMAP_H
 #define GTDMAP_H
@@ -21,6 +22,7 @@ public:
 	void printMapBoard(); //prints 2D int array to console
 	bool loadTextures(SDL_Renderer *renderer); //Loads textures into textures vector
 	void draw(int x, int y, SDL_Renderer *renderer); //Draws base map.
+	void addUnit(GTDUnit *u, GTDPlayer *p);
 	int getMapW();
 	int getMapH();
 	int getTileW();
@@ -36,8 +38,7 @@ private:
 	int tileW;
 	int tileH;
 	std::vector<SDL_Texture *> textures;
-	std::vector<GTDUnit> units; //Units will be displayed on map but have ownership through their own "owner" pointer.
-	std::vector<GTDPlayer> players;
+	std::vector<GTDUnit> units; //Units will be displayed on map but have ownership through their own "owner" pointer. *map should not be handling players*
 	std::vector<GTDRect> rects;
 
 };

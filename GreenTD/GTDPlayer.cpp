@@ -32,11 +32,45 @@ void GTDPlayer::processInput()
 						std::cout << "Build mode..." << std::endl;
 						building = 1;
 					}
-					lastkey = key;
 					if (!strcmp(key, "C"))
 					{
 						std::cout << "Build mode off..." << std::endl;
 						building = 0;
+					}
+					if (!strcmp(key, "1") && building == 0)
+					{
+						currentlySelectedBuilding = 0;
+						std::cout << "Selected building = NORMAL..." << std::endl;
+					}
+					if (!strcmp(key, "2") && building == 0)
+					{
+						currentlySelectedBuilding = 1;
+						std::cout << "Selected building = FIRE..." << std::endl;
+					}
+					if (!strcmp(key, "3") && building == 0)
+					{
+						currentlySelectedBuilding = 2;
+						std::cout << "Selected building = ICE..." << std::endl;
+					}
+					if (!strcmp(key, "4") && building == 0)
+					{
+						currentlySelectedBuilding = 3;
+						std::cout << "Selected building = LIGHTNING..." << std::endl;
+					}
+					if (!strcmp(key, "5") && building == 0)
+					{
+						currentlySelectedBuilding = 4;
+						std::cout << "Selected building = EARTH..." << std::endl;
+					}
+					if (!strcmp(key, "6") && building == 0)
+					{
+						currentlySelectedBuilding = 5;
+						std::cout << "Selected building = SPEEDASSIST..." << std::endl;
+					}
+					if (!strcmp(key, "7") && building == 0)
+					{
+						currentlySelectedBuilding = 6;
+						std::cout << "Selected building = DMGASSIST..." << std::endl;
 					}
 					lastkey = key;
 				}
@@ -79,10 +113,9 @@ void GTDPlayer::processInput()
 				case SDL_BUTTON_LEFT:
 					std::cout << "Mouse1 Released" << std::endl;
 					mouseHold = false;
-					if (building)
+					if (isSelectingBuildLocation())
 					{
-						//Begin building
-						building = false;
+						queueBuilding();
 					}
 					break;
 				case SDL_BUTTON_RIGHT:
@@ -110,7 +143,32 @@ bool GTDPlayer::isHoldingMouse()
 {
 	return mouseHold;
 }
-bool GTDPlayer::isBuilding()
+
+void GTDPlayer::queueBuilding()
+{
+	buildingQueued = true;
+	building = false;
+
+}
+
+int GTDPlayer::getCurrentlySelectedBuilding()
+{
+	return currentlySelectedBuilding;
+}
+
+
+bool GTDPlayer::hasBuildingQueued()
+{
+	return buildingQueued;
+}
+
+void GTDPlayer::endQueueBuilding()
+{
+	buildingQueued = false;
+
+}
+
+bool GTDPlayer::isSelectingBuildLocation()
 {
 	return building;
 }

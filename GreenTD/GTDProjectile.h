@@ -1,13 +1,9 @@
-//GTProjectile
-
-#ifndef GTDPROJECTILE_H
-#define GTDPROJECTILE_H
-
 #include <iostream>
 #include <SDL.h>
 #include "GTDMap.h"
 
-
+#ifndef GTDPROJECTILE_H
+#define GTDPROJECTILE_H
 
 using namespace std;
 

@@ -43,7 +43,6 @@ void GTDGame::run()
 
 	SDL_Rect mouseRect;
 
-
 	GTDTimer tickTimer;
 	tickTimer.start();
 	int timeElapsed = 0;
@@ -63,17 +62,21 @@ void GTDGame::run()
 		//get mouse state
 		SDL_GetMouseState(&mouseX, &mouseY);
 
+
 		//Draw map and mouse rect if necessary
 		map.draw(screenX, screenY, renderer);
-		if (player.isHoldingMouse() && !player.isBuilding())
+		if (player.isHoldingMouse() && !player.isSelectingBuildLocation())
 		{
 			SDL_SetRenderDrawColor(renderer, 0, 255, 0, 1);
-			std::cout << "Should be drawing mouse rect..." << std::endl;
 			mouseRect.x = std::min(mouseX,player.getOldMouseX()); //min to allow box selection in all directions
 			mouseRect.y = std::min(mouseY,player.getOldMouseY());//min to allow box selection in all directions 
 			mouseRect.w = std::abs(mouseX - player.getOldMouseX());
 			mouseRect.h = std::abs(mouseY - player.getOldMouseY());
-			std::cout << mouseRect.x << " " << mouseRect.y << " " << mouseRect.w << " " << mouseRect.h << std::endl;
+			if (debug)
+			{
+				std::cout << "Should be drawing mouse rect..." << std::endl;
+				std::cout << mouseRect.x << " " << mouseRect.y << " " << mouseRect.w << " " << mouseRect.h << std::endl;
+			}
 			if (mouseRect.w > 0 && mouseRect.h > 0)
 			{
 				if (SDL_RenderDrawRect(renderer, &mouseRect))
@@ -84,7 +87,7 @@ void GTDGame::run()
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 1);
 		}
 		//Draw blue rect on current tile if building
-		if (player.isBuilding())
+		if (player.isSelectingBuildLocation())
 		{
 			int btileX = std::floor(mouseX / map.getTileW()) * map.getTileW();
 			int btileY = std::floor(mouseY / map.getTileH()) * map.getTileH();
@@ -98,6 +101,20 @@ void GTDGame::run()
 			SDL_SetRenderDrawColor(renderer, 0, 0, 255, 1);
 			SDL_RenderFillRect(renderer, &buildingRect);
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 1);
+		}
+
+		//Add building to map if queued
+		if (player.hasBuildingQueued())
+		{
+			int btileX = std::floor(mouseX / map.getTileW()) * map.getTileW();
+			int btileY = std::floor(mouseY / map.getTileH()) * map.getTileH();
+			int btileDeltaX = screenX % map.getTileW();
+			int btileDeltaY = screenY % map.getTileH();
+			int bX = btileX - btileDeltaX + screenX;
+			int bY = btileY - btileDeltaY + screenY;
+			GTDUnit::GTDBuilding btype = static_cast<GTDUnit::GTDBuilding>(player.getCurrentlySelectedBuilding());
+			map.addUnit(new GTDUnit(btype, &player, bX, bY, renderer), &player);
+			player.endQueueBuilding();
 		}
 
 		//Present Contents to screen
