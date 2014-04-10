@@ -113,19 +113,19 @@ void GTDGame::quit()
 
 void GTDGame::moveScreen()
 {
-	if (mouseX < 5)
+	if (mouseX < 5 || player.isHolding("Left"))
 	{
 		screenX = std::max(0, screenX - 2);
 	}
-	if (mouseY < 5)
+	if (mouseY < 5 || player.isHolding("Up"))
 	{
 		screenY = std::max(0, screenY - 2);
 	}
-	if (mouseX > S_WIDTH - 5)
+	if (mouseX > S_WIDTH - 5 || player.isHolding("Right"))
 	{
 		screenX = std::min(map.getTileW() * map.getMapW() - S_WIDTH, screenX + 2);
 	}
-	if (mouseY > S_HEIGHT - 5)
+	if (mouseY > S_HEIGHT - 5 || player.isHolding("Down"))
 	{
 		screenY = std::min(map.getTileH() * map.getMapH() - S_HEIGHT, screenY + 2);
 	}
@@ -134,7 +134,7 @@ void GTDGame::moveScreen()
 void GTDGame::drawBoxSelection()
 {
 	SDL_Rect mouseRect;
-	if (player.isHoldingMouse() && !player.isSelectingBuildLocation())
+	if (player.isHolding("MOUSE1") && !player.isSelectingBuildLocation())
 	{
 		SDL_SetRenderDrawColor(renderer, 0, 255, 0, 1);
 		mouseRect.x = std::min(mouseX, player.getOldMouseX()); //min to allow box selection in all directions

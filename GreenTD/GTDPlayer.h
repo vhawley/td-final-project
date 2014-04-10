@@ -1,10 +1,13 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 #include <SDL.h>
 
 #ifndef GTDPLAYER_H
 #define GTDPLAYER_H
+
+using namespace std;
 
 class GTDPlayer
 {
@@ -12,7 +15,8 @@ public:
 	GTDPlayer();
 	void processInput();
 	int getOver();
-	bool isHoldingMouse();
+
+	bool isHolding(string key);
 	void queueBuilding();
 	bool hasBuildingQueued();
 	int getCurrentlySelectedBuilding();
@@ -30,12 +34,14 @@ private:
 	bool building;
 	int currentlySelectedBuilding;
 	bool buildingQueued;
-	bool mouseHold;
+
+	map<string, bool> keyDown;
+
 	int oldMouseX;
 	int oldMouseY;
 	int over;
 	int money;
-	std::vector<int> selectedUnits;
+	vector<int> selectedUnits;
 };
 
 #endif
