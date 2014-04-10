@@ -27,6 +27,7 @@ public:
 	int getMapH();
 	int getTileW();
 	int getTileH();
+	bool spaceIsBuildable(int m, int n);
 	bool rectContainsUnit(GTDRect rect, GTDUnit unit); //If rect contains unit, return yes
 	~GTDMap();
 private:

@@ -2,6 +2,7 @@
 
 GTDPlayer::GTDPlayer()
 {
+	money = 750;
 	over = 0;
 	lastkey = "NULL";
 	mouseHold = false;
@@ -148,7 +149,6 @@ void GTDPlayer::queueBuilding()
 {
 	buildingQueued = true;
 	building = false;
-
 }
 
 int GTDPlayer::getCurrentlySelectedBuilding()
@@ -180,4 +180,19 @@ int GTDPlayer::getOldMouseX()
 int GTDPlayer::getOldMouseY()
 {
 	return oldMouseY;
+}
+
+int GTDPlayer::getMoney()
+{
+	return money;
+}
+
+void GTDPlayer::spend(int cost)
+{
+	money -= cost;
+}
+
+void GTDPlayer::earn(int bounty)
+{
+	money += bounty;
 }

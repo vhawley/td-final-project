@@ -22,6 +22,7 @@ public:
 	int getPosX();
 	int getPosY();
 	int getCollision();
+
 	SDL_Texture * getTexture();
 
 	void issueMoveToPoint(int x, int y);
@@ -29,6 +30,9 @@ public:
 
 	bool isBuilding();
 	bool isWaveUnit();
+
+	static int getCollision(enum GTDBuilding b);
+	static int getCost(enum GTDBuilding b);
 
 private:
 	void setPosX(int x);
@@ -42,6 +46,7 @@ private:
 	string name;
 	GTDPlayer *owner; //Units must have an owner
 	enum GTDUnitType unitType;
+	int cost;
 	int maxhealth;
 	int health;
 	int armor;
@@ -51,6 +56,7 @@ private:
 	int bountyrange;
 	int attackDMG;
 	int attackDMGRange;
+	int attackRange;
 	
 };
 

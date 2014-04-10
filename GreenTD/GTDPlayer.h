@@ -20,6 +20,9 @@ public:
 	bool isSelectingBuildLocation();
 	int getOldMouseX();
 	int getOldMouseY();
+	int getMoney();
+	void spend(int cost);
+	void earn(int bounty);
 private:
 	SDL_Event e;
 	const char *key;
@@ -32,6 +35,7 @@ private:
 	int oldMouseY;
 	int over;
 	int money;
+	std::vector<int> selectedUnits;
 };
 
 #endif

@@ -40,6 +40,7 @@ bool GTDMap::init(char *filename, SDL_Renderer *renderer)
 			}
 		}
 		std::cout << "Width / height = " << wCounter << " / " << hCounter << std::endl;
+		
 		mapBoard = new int *[hCounter];
 
 		//2d array based on counts from last read
@@ -185,6 +186,8 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 		}
 		tileRect.y += tileRect.h;
 	}
+
+	//Draw units on map
 	for (unsigned int uindex = 0; uindex < units.size(); uindex++)
 	{
 		if (units.at(uindex).getPosX() >(x - units.at(uindex).getCollision() / 2) &&
@@ -193,8 +196,8 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 			units.at(uindex).getPosY() < (y + 720 + units.at(uindex).getCollision() / 2)) //only draw if in screen bounds
 		{
 			SDL_Rect unitRect;
-			unitRect.x = units.at(uindex).getPosX() - x;
-			unitRect.y = units.at(uindex).getPosY() - y;
+			unitRect.x = units.at(uindex).getPosX() - x - units.at(uindex).getCollision() / 2;
+			unitRect.y = units.at(uindex).getPosY() - y - units.at(uindex).getCollision() / 2;
 			unitRect.w = units.at(uindex).getCollision();
 			unitRect.h = units.at(uindex).getCollision();
 			SDL_RenderCopy(renderer, units.at(uindex).getTexture(), NULL, &unitRect);
@@ -227,12 +230,42 @@ int GTDMap::getTileH()
 }
 
 
-bool rectContainsUnit(GTDRect rect, GTDUnit unit)
+bool GTDMap::spaceIsBuildable(int m, int n)
+{
+	if ((getMapBoard(m, n) >= 1 && getMapBoard(m, n) <= 164) ||
+		(getMapBoard(m, n) >= 190 && getMapBoard(m, n) <= 221) ||
+		(getMapBoard(m, n) >= 284 && getMapBoard(m, n) <= 317) ||
+		getMapBoard(m, n) == 322 ||
+		(getMapBoard(m, n) >= 332 && getMapBoard(m, n) <= 337) ||
+		getMapBoard(m, n) == 345)
+	{
+		return false; //terrain is unbuildable
+	}
+
+	GTDRect buildingRect;
+	buildingRect.setX(n * getTileH());
+	buildingRect.setY(m * getTileW());
+	buildingRect.setW(getTileW());
+	buildingRect.setH(getTileH());
+	//std::cout << buildingRect.getX() << " " << buildingRect.getY() << " " << buildingRect.getW() << " " << buildingRect.getH() << std::endl;
+	for (unsigned int i = 0; i < units.size(); i++)
+	{
+		//std::cout << units.at(i).getPosX() << " " << units.at(i).getPosY() << " " << units.at(i).getCollision() << std::endl;
+		if (rectContainsUnit(buildingRect, units.at(i)))
+		{
+			return false;//building in the way
+		}
+	}
+	return true;
+}
+
+
+bool GTDMap::rectContainsUnit(GTDRect rect, GTDUnit unit)
 {
 	if (unit.getPosX() >= rect.getX() &&
 		unit.getPosX() <= (rect.getX() + rect.getW()) &&
 		unit.getPosY() >= rect.getY() &&
-		unit.getPosY() >= (rect.getY() + rect.getH()))
+		unit.getPosY() <= (rect.getY() + rect.getH()))
 	{
 		return true;
 	}

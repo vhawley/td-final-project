@@ -19,6 +19,11 @@ public:
 	bool init();
 	void run();
 	void quit();
+	void moveScreen();
+	void drawBoxSelection();
+	void drawBuildBox();
+	void drawBoxOnSelectedUnits();
+	void buildPlayerBuilding();
 private:
 	bool loadTextures();
 	int IsGameOver;
