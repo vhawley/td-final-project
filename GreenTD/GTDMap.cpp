@@ -70,6 +70,8 @@ bool GTDMap::init(char *filename, SDL_Renderer *renderer)
 		}
 		initialized = 1;
 		//printMapBoard();
+		GTDUnit u( GTDUnit::VILLAGER , 2000, 100, renderer); //WaveUnit
+		addUnit(&u);
 		return 1;
 	}
 	else
@@ -205,11 +207,18 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 	}
 }
 
-void GTDMap::addUnit(GTDUnit *u, GTDPlayer *p)
+void GTDMap::addUnit(GTDUnit *u)
 {
 	units.push_back(*u);
 }
 
+void GTDMap::stepUnits(int timeElapsed)
+{
+	for (unsigned int i = 0; i < units.size(); i++)
+	{
+		units.at(i).step(timeElapsed);
+	}
+}
 
 int GTDMap::getMapW()
 {

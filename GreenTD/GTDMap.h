@@ -22,13 +22,14 @@ public:
 	void printMapBoard(); //prints 2D int array to console
 	bool loadTextures(SDL_Renderer *renderer); //Loads textures into textures vector
 	void draw(int x, int y, SDL_Renderer *renderer); //Draws base map.
-	void addUnit(GTDUnit *u, GTDPlayer *p);
+	void addUnit(GTDUnit *u);
+	void stepUnits(int timeElapsed);
 	int getMapW();
 	int getMapH();
 	int getTileW();
 	int getTileH();
 	bool spaceIsBuildable(int m, int n);
-	bool rectContainsUnit(GTDRect rect, GTDUnit unit); //If rect contains unit, return yes
+	static bool rectContainsUnit(GTDRect rect, GTDUnit unit); //If rect contains unit, return yes
 	~GTDMap();
 private:
 	int initialized;

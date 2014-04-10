@@ -58,6 +58,9 @@ void GTDGame::run()
 		//handle input
 		player.processInput();
 
+		//Step units
+		map.stepUnits(timeElapsed);
+
 		//Add building to map if queued
 		buildPlayerBuilding();
 
@@ -180,7 +183,7 @@ void GTDGame::drawBuildBox()
 		int mapIndexY = (btileY + screenY) / map.getTileH();
 		
 		if (map.spaceIsBuildable(mapIndexY, mapIndexX))
-		{
+			{
 			GTDUnit::GTDBuilding btype = static_cast<GTDUnit::GTDBuilding>(player.getCurrentlySelectedBuilding());
 			int cost = GTDUnit::getCost(btype);
 			if (player.getMoney() >= cost)
@@ -221,14 +224,14 @@ void GTDGame::buildPlayerBuilding()
 		int cost = GTDUnit::getCost(btype);
 		if (player.getMoney() >= cost)
 		{
-			int btileX = ( mouseX / map.getTileW() ) * map.getTileW();
-			int btileY = ( mouseY / map.getTileH() ) * map.getTileH();
+			int btileX = (mouseX / map.getTileW()) * map.getTileW();
+			int btileY = (mouseY / map.getTileH()) * map.getTileH();
 
 			int btileDeltaX = screenX % map.getTileW();
 			int btileDeltaY = screenY % map.getTileH();
 
-			int bX = btileX - btileDeltaX + screenX + GTDUnit::getCollision(btype)/2;
-			int bY = btileY - btileDeltaY + screenY + GTDUnit::getCollision(btype)/2;
+			int bX = btileX - btileDeltaX + screenX + GTDUnit::getCollision(btype) / 2;
+			int bY = btileY - btileDeltaY + screenY + GTDUnit::getCollision(btype) / 2;
 
 			int mapIndexX = (btileX + screenX) / map.getTileW();
 			int mapIndexY = (btileY + screenY) / map.getTileH();
@@ -237,17 +240,14 @@ void GTDGame::buildPlayerBuilding()
 			{
 				player.spend(cost);
 				std::cout << "You spent " << cost << " money on a " << btype << " tower.  You now have " << player.getMoney() << " money." << std::endl;
-				map.addUnit(new GTDUnit(btype, &player, bX, bY, renderer), &player);
+				map.addUnit(new GTDUnit(btype, &player, bX, bY, renderer));
 			}
-
-			
+			else
+			{
+				std::cout << "You only have " << player.getMoney() << " money. A " << btype << " tower costs " << cost << " money.";
+			}
+			player.endQueueBuilding();
 		}
-		else
-		{
-			std::cout << "You only have " << player.getMoney() << " money. A " << btype << " tower costs " << cost << " money.";
-		}
-		player.endQueueBuilding();
 	}
 }
-
 

@@ -27,7 +27,7 @@ public:
 private:
 	bool loadTextures();
 	int IsGameOver;
-	int debug = 1;
+	int debug = 0;
 	int mouseX;
 	int mouseY;
 	

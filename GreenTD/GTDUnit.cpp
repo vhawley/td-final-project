@@ -6,7 +6,7 @@ GTDUnit::GTDUnit()
 
 }
 
-GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, int x, int y, SDL_Renderer *renderer)
+GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Renderer *renderer)
 {
 	unitType = BUILDING;
 	switch (b)
@@ -65,19 +65,54 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, int x, int y, SDL_Renderer 
 }
 
 
-GTDUnit::GTDUnit(enum GTDWaveUnit w, int x, int y, SDL_Renderer *renderer)
+GTDUnit::GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *renderer)
 {
-
-
+	unitType = WAVEUNIT;
+	switch (w)
+	{
+	case VILLAGER:
+		cout << "Creating VILLAGER unit..." << endl;
+		setPosX(x);
+		setPosY(y);
+		collision = 32;
+		if (!loadUnitTexture("./assets/creeps/VILLAGER.bmp", renderer))
+		{
+			cout << "NORMAL tower texture load failed" << endl;
+		}
+		name = "Villager";
+		owner = NULL;
+		maxhealth = 50;
+		health = 50;
+		armor = 2;
+		invuln = false;
+		movespeed = 100;
+		bounty = 10;
+		bountyrange = 2;
+		attackDMG = 18;
+		attackDMGRange = 3;
+		cost = 0;
+		break;
+	case SWORDSMAN:
+		cout << "Creating SWORDSMAN unit..." << endl;
+		break;
+	case KNIGHT:
+		cout << "Creating KNIGHT unit..." << endl;
+		break;
+	case KING:
+		cout << "Creating KING unit..." << endl;
+		break;
+	default:
+		break;
+	}
 }
 
 
 
-int GTDUnit::getPosX()
+double GTDUnit::getPosX()
 {
 	return posX;
 }
-int GTDUnit::getPosY()
+double GTDUnit::getPosY()
 {
 	return posY;
 }
@@ -90,6 +125,30 @@ int GTDUnit::getCollision()
 SDL_Texture * GTDUnit::getTexture()
 {
 	return text;
+}
+
+GTDPlayer * GTDUnit::getOwner()
+{
+	return owner;
+}
+
+void GTDUnit::step(int timeElapsed) //time elapsed in milliseconds
+{
+	switch (unitType)
+	{
+	case BUILDING:
+		//what to do as a building every game tick. check for attack.  attack if possible
+
+		break;
+	case WAVEUNIT:
+		//what to do as a unit every game tick. move towards next waypoint
+		posX += movespeed * (double) timeElapsed / 1000;
+		posY += movespeed * (double) timeElapsed / 1000;
+		break;
+	default:
+		break;
+	}
+
 }
 
 
@@ -168,11 +227,11 @@ int GTDUnit::getCost(enum GTDBuilding b)
 }
 
 
-void GTDUnit::setPosX(int x)
+void GTDUnit::setPosX(double x)
 {
 	posX = x;
 }
-void GTDUnit::setPosY(int y)
+void GTDUnit::setPosY(double y)
 {
 	posY = y;
 }

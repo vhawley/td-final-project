@@ -1,7 +1,13 @@
-#include "GTDWaypoint.h"
+#include "GTDWaypointNode.h"
 
 GTDWaypointNode::GTDWaypointNode()
 {
 
 	
+}
+
+GTDWaypointNode::GTDWaypointNode(GTDRect *r)
+{
+
+
 }

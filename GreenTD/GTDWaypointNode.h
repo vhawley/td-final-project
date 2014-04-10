@@ -8,8 +8,9 @@ class GTDWaypointNode
 {
 public:
 	GTDWaypointNode();
+	GTDWaypointNode(GTDRect *r);
 private:
-	GTDRect rect;
+	GTDRect *rect;
 	GTDWaypointNode *next;
 };
 
