@@ -192,10 +192,13 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 	//Draw units on map
 	for (unsigned int uindex = 0; uindex < units.size(); uindex++)
 	{
-		if (units.at(uindex).getPosX() >(x - units.at(uindex).getCollision() / 2) &&
-			units.at(uindex).getPosX() < (x + 1280 + units.at(uindex).getCollision() / 2) &&
-			units.at(uindex).getPosY() > (y - units.at(uindex).getCollision() / 2) &&
-			units.at(uindex).getPosY() < (y + 720 + units.at(uindex).getCollision() / 2)) //only draw if in screen bounds
+		GTDRect screenRect;
+		screenRect.setX(x - units.at(uindex).getCollision()/2);
+		screenRect.setY(y - units.at(uindex).getCollision()/2);
+		screenRect.setW(x + 1280 + units.at(uindex).getCollision() / 2);
+		screenRect.setH(y + 720 + units.at(uindex).getCollision() / 2);
+		
+		if (rectContainsUnit(screenRect, units.at(uindex))) //only draw if in screen bounds for performance
 		{
 			SDL_Rect unitRect;
 			unitRect.x = units.at(uindex).getPosX() - x - units.at(uindex).getCollision() / 2;
@@ -203,6 +206,22 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 			unitRect.w = units.at(uindex).getCollision();
 			unitRect.h = units.at(uindex).getCollision();
 			SDL_RenderCopy(renderer, units.at(uindex).getTexture(), NULL, &unitRect);
+
+			if (units.at(uindex).isWaveUnit())
+			{
+				double healthPct = (double) units.at(uindex).getHealth() / units.at(uindex).getMaxHealth();
+				SDL_Rect healthRect;
+				healthRect.x = unitRect.x - 4;
+				healthRect.y = unitRect.y - 10;
+				healthRect.w = unitRect.w + 8; //Red = remaining
+				healthRect.h = 6;
+				SDL_SetRenderDrawColor(renderer, 255, 50, 50, 1); 
+				SDL_RenderFillRect(renderer, &healthRect);
+
+				healthRect.w *= healthPct; //Green = remaining health
+				SDL_SetRenderDrawColor(renderer, 50, 255, 50, 1);
+				SDL_RenderFillRect(renderer, &healthRect);
+			}
 		}
 	}
 }

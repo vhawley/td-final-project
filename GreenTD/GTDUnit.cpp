@@ -6,9 +6,10 @@ GTDUnit::GTDUnit()
 
 }
 
-GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Renderer *renderer)
+GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Renderer *rend)
 {
 	unitType = BUILDING;
+	renderer = rend;
 	switch (b)
 	{
 		case NORMAL:
@@ -65,8 +66,9 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Ren
 }
 
 
-GTDUnit::GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *renderer)
+GTDUnit::GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend)
 {
+	renderer = rend;
 	unitType = WAVEUNIT;
 	switch (w)
 	{
@@ -74,7 +76,7 @@ GTDUnit::GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *renderer)
 		cout << "Creating VILLAGER unit..." << endl;
 		setPosX(x);
 		setPosY(y);
-		collision = 32;
+		collision = 28;
 		if (!loadUnitTexture("./assets/creeps/VILLAGER.bmp", renderer))
 		{
 			cout << "NORMAL tower texture load failed" << endl;
@@ -85,12 +87,13 @@ GTDUnit::GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *renderer)
 		health = 50;
 		armor = 2;
 		invuln = false;
-		movespeed = 100;
+		movespeed = 200;
 		bounty = 10;
 		bountyrange = 2;
 		attackDMG = 18;
 		attackDMGRange = 3;
 		cost = 0;
+		currentDest = new GTDRect(2000, 500, 100, 100);
 		break;
 	case SWORDSMAN:
 		cout << "Creating SWORDSMAN unit..." << endl;
@@ -141,16 +144,32 @@ void GTDUnit::step(int timeElapsed) //time elapsed in milliseconds
 
 		break;
 	case WAVEUNIT:
-		//what to do as a unit every game tick. move towards next waypoint
-		posX += movespeed * (double) timeElapsed / 1000;
-		posY += movespeed * (double) timeElapsed / 1000;
+		//what to do as a unit every game tick. 
+		if (atDestination())
+		{
+			//set next Destination
+			health = .50 * maxhealth;
+		}
+		else
+		{
+			//move towards center of next waypoint
+			double xC = currentDest->getX() + (double) currentDest->getW() / 2;
+			double yC = currentDest->getY() + (double) currentDest->getH() / 2;
+
+			double dx = xC - posX;
+			double dy = yC - posY;
+
+			double walkangle = atan(dy / dx);
+
+			posX += cos(walkangle) * ((double)timeElapsed / 1000) * movespeed;
+			posY += sin(walkangle) * ((double)timeElapsed / 1000) * movespeed;
+		}
 		break;
 	default:
 		break;
 	}
 
 }
-
 
 void GTDUnit::issueMoveToPoint(int x, int y)
 {
@@ -177,6 +196,53 @@ bool GTDUnit::isWaveUnit()
 		return true;
 	}
 	return false;
+}
+
+bool GTDUnit::isSelected()
+{
+	return selected;
+}
+
+int GTDUnit::getMaxHealth()
+{
+	return maxhealth;
+}
+
+int GTDUnit::getHealth()
+{ 
+	return health;
+}
+int GTDUnit::getArmor()
+{ 
+	return armor;
+}
+bool GTDUnit::getInvuln()
+{ 
+	return invuln;
+}
+int GTDUnit::getMovespeed()
+{ 
+	return movespeed;
+}
+int GTDUnit::getBounty()
+{
+	return bounty;
+}
+int GTDUnit::getBountyrange()
+{ 
+	return bountyrange;
+}
+int GTDUnit::getAttackDMG()
+{ 
+	return attackDMG;
+}
+int GTDUnit::getAttackDMGRange()
+{
+	return attackDMG;
+}
+int GTDUnit::getAttackRange()
+{ 
+	return attackRange;
 }
 
 
@@ -235,6 +301,19 @@ void GTDUnit::setPosY(double y)
 {
 	posY = y;
 }
+
+bool GTDUnit::atDestination()
+{
+	if (posX > currentDest->getX() &&
+		posX < (currentDest->getX() + currentDest->getW()) &&
+		posY > currentDest->getY() &&
+		posY < (currentDest->getY() + currentDest->getH()))
+	{
+		return true;
+	}
+	return false;
+}
+
 
 bool GTDUnit::loadUnitTexture(string fn, SDL_Renderer *renderer)
 {

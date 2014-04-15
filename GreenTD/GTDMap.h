@@ -1,3 +1,6 @@
+#ifndef GTDMAP_H
+#define GTDMAP_H
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -7,9 +10,6 @@
 #include "GTDRect.h"
 #include "GTDUnit.h"
 #include "GTDPlayer.h"
-
-#ifndef GTDMAP_H
-#define GTDMAP_H
 
 class GTDMap
 {

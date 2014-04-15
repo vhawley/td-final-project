@@ -1,10 +1,9 @@
-#include <iostream>
-#include <string>
-#include <SDL.h>
-
 #ifndef GTDRECT_H
 #define GTDRECT_H
 
+#include <iostream>
+#include <string>
+#include <SDL.h>
 
 class GTDRect
 {
