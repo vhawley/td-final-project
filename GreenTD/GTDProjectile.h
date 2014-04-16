@@ -1,9 +1,9 @@
+#pragma once
+
 #include <iostream>
 #include <SDL.h>
 #include "GTDMap.h"
 
-#ifndef GTDPROJECTILE_H
-#define GTDPROJECTILE_H
 
 using namespace std;
 
@@ -26,5 +26,3 @@ class GTDProjectile
 		int ydir;		//y direction of motion (1, 0 or -1)
 		GTDMap *map; //map reference
 };
-
-#endif

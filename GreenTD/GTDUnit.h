@@ -1,5 +1,4 @@
-#ifndef GTDUNIT_H
-#define GTDUNIT_H
+#pragma once
 
 #include <iostream>
 #include <math.h>
@@ -20,7 +19,7 @@ public:
 
 	GTDUnit();
 	GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Renderer *rend); //Building
-	GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend); //WaveUnit
+	GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend, GTDWaypoint *way); //WaveUnit
 	double getPosX();
 	double getPosY();
 	int getCollision();
@@ -31,10 +30,11 @@ public:
 	void step(int timeElapsed);
 
 	void issueMoveToPoint(int x, int y);
-	void issueMoveToRect(GTDRect rect);
+	void issueMoveToRect(GTDRect *rect);
 
 	bool isBuilding();
 	bool isWaveUnit();
+	GTDRect getCurrentDest();
 
 	bool isSelected();
 	int getMaxHealth();
@@ -69,7 +69,7 @@ private:
 	string name;
 	GTDPlayer *owner; //Units must have an owner
 	enum GTDUnitType unitType;
-	GTDWaypoint waypoint;
+	GTDWaypoint *waypoint;
 	GTDRect *currentDest;
 
 	bool selected;
@@ -85,5 +85,3 @@ private:
 	int attackRange;
 	
 };
-
-#endif

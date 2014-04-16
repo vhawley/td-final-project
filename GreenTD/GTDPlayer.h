@@ -1,11 +1,10 @@
+#pragma once
+
 #include <iostream>
 #include <string>
 #include <vector>
 #include <map>
 #include <SDL.h>
-
-#ifndef GTDPLAYER_H
-#define GTDPLAYER_H
 
 using namespace std;
 
@@ -43,5 +42,3 @@ private:
 	int money;
 	vector<int> selectedUnits;
 };
-
-#endif

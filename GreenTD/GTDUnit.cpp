@@ -66,7 +66,7 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Ren
 }
 
 
-GTDUnit::GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend)
+GTDUnit::GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend, GTDWaypoint *way)
 {
 	renderer = rend;
 	unitType = WAVEUNIT;
@@ -87,13 +87,14 @@ GTDUnit::GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend)
 		health = 50;
 		armor = 2;
 		invuln = false;
-		movespeed = 200;
+		movespeed = 100;
 		bounty = 10;
 		bountyrange = 2;
 		attackDMG = 18;
 		attackDMGRange = 3;
 		cost = 0;
-		currentDest = new GTDRect(2000, 500, 100, 100);
+		waypoint = way;
+		issueMoveToRect(waypoint->first->rect);
 		break;
 	case SWORDSMAN:
 		cout << "Creating SWORDSMAN unit..." << endl;
@@ -148,21 +149,38 @@ void GTDUnit::step(int timeElapsed) //time elapsed in milliseconds
 		if (atDestination())
 		{
 			//set next Destination
-			health = .50 * maxhealth;
+			if (waypoint->first->next != NULL)
+			{
+				waypoint->advance();
+				issueMoveToRect(waypoint->first->rect);
+			}
+			else
+			{
+				//reached the end
+			}
+			
 		}
 		else
 		{
 			//move towards center of next waypoint
-			double xC = currentDest->getX() + (double) currentDest->getW() / 2;
-			double yC = currentDest->getY() + (double) currentDest->getH() / 2;
+			double xC = currentDest->getX() + (double)currentDest->getW() / 2;
+			double yC = currentDest->getY() + (double)currentDest->getH() / 2;
 
 			double dx = xC - posX;
 			double dy = yC - posY;
 
 			double walkangle = atan(dy / dx);
 
-			posX += cos(walkangle) * ((double)timeElapsed / 1000) * movespeed;
-			posY += sin(walkangle) * ((double)timeElapsed / 1000) * movespeed;
+			if (dx < 0) //only dx < 0 because cos is always positive. sin can return - values!!
+			{
+				posX -= cos(walkangle) * ((double)timeElapsed / 1000) * movespeed;
+				posY -= sin(walkangle) * ((double)timeElapsed / 1000) * movespeed;
+			}
+			else
+			{
+				posX += cos(walkangle) * ((double)timeElapsed / 1000) * movespeed;
+				posY += sin(walkangle) * ((double)timeElapsed / 1000) * movespeed;
+			}
 		}
 		break;
 	default:
@@ -176,9 +194,9 @@ void GTDUnit::issueMoveToPoint(int x, int y)
 
 
 }
-void GTDUnit::issueMoveToRect(GTDRect rect)
+void GTDUnit::issueMoveToRect(GTDRect *rect)
 {
-
+	currentDest = rect;
 }
 
 bool GTDUnit::isBuilding()
@@ -196,6 +214,11 @@ bool GTDUnit::isWaveUnit()
 		return true;
 	}
 	return false;
+}
+
+GTDRect GTDUnit::getCurrentDest()
+{
+	return *currentDest;
 }
 
 bool GTDUnit::isSelected()

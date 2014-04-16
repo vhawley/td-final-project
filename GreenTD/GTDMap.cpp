@@ -70,8 +70,12 @@ bool GTDMap::init(char *filename, SDL_Renderer *renderer)
 		}
 		initialized = 1;
 		//printMapBoard();
-		GTDUnit u( GTDUnit::VILLAGER , 2000, 100, renderer); //WaveUnit
-		addUnit(&u);
+		GTDWaypoint *waypoint = new GTDWaypoint(new GTDWaypointNode(new GTDRect(2000, 500, 50, 50)));
+		waypoint->addNode(new GTDWaypointNode(new GTDRect(1800, 700, 50, 50)));
+		waypoint->addNode(new GTDWaypointNode(new GTDRect(1600, 500, 50, 50)));
+		waypoint->addNode(new GTDWaypointNode(new GTDRect(1800, 300, 50, 50)));
+		waypoint->addNode(new GTDWaypointNode(new GTDRect(2000, 764, 50, 50)));
+		addUnit(new GTDUnit(GTDUnit::VILLAGER, 2000, 100, renderer, waypoint));
 		return 1;
 	}
 	else
@@ -222,6 +226,19 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 				SDL_SetRenderDrawColor(renderer, 50, 255, 50, 1);
 				SDL_RenderFillRect(renderer, &healthRect);
 			}
+
+			/* 
+			SDL_Rect destRect;
+			destRect.x = units.at(uindex).getCurrentDest().getX() - x;
+			destRect.y= units.at(uindex).getCurrentDest().getY() - y;
+			destRect.w = units.at(uindex).getCurrentDest().getW();
+			destRect.h = units.at(uindex).getCurrentDest().getH();
+			SDL_SetRenderDrawColor(renderer, 255, 0, 0, 1);
+			SDL_RenderDrawRect(renderer, &destRect);
+			*/
+			
+			//for testing waypoint
+			
 		}
 	}
 }

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -8,9 +10,6 @@
 #include "GTDUnit.h"
 #include "GTDMap.h"
 #include "GTDTimer.h"
-
-#ifndef GTDGAME_H
-#define GTDGAME_H
 
 class GTDGame
 {
@@ -40,5 +39,3 @@ private:
 	GTDMap map;
 	GTDPlayer player;
 };
-
-#endif

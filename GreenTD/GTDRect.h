@@ -1,5 +1,4 @@
-#ifndef GTDRECT_H
-#define GTDRECT_H
+#pragma once
 
 #include <iostream>
 #include <string>
@@ -26,5 +25,3 @@ private:
 	int w; //width
 	int h; //height
 };
-
-#endif

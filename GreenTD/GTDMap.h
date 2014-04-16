@@ -1,5 +1,4 @@
-#ifndef GTDMAP_H
-#define GTDMAP_H
+#pragma once
 
 #include <iostream>
 #include <fstream>
@@ -10,6 +9,7 @@
 #include "GTDRect.h"
 #include "GTDUnit.h"
 #include "GTDPlayer.h"
+#include "GTDWaypoint.h"
 
 class GTDMap
 {
@@ -44,5 +44,3 @@ private:
 	std::vector<GTDRect> rects;
 
 };
-
-#endif

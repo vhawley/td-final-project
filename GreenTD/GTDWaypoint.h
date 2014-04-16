@@ -1,9 +1,8 @@
+#pragma once
+
 #include <iostream>
 #include <math.h>
 #include "GTDWaypointNode.h"
-
-#ifndef GTDWAYPOINT_H
-#define GTDWAYPOINT_H
 
 using namespace std;
 
@@ -11,8 +10,10 @@ class GTDWaypoint
 {
 public:
 	GTDWaypoint();
-private:
+	GTDWaypoint(GTDWaypointNode *head);
+	void addNode(GTDWaypointNode *node);
+	void advance();
 	GTDWaypointNode *first;
-};
+private:
 
-#endif
+};
