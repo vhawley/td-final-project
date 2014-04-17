@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <fstream>
 #include <math.h>
 #include <vector>
 #include "GTDUnit.h"
@@ -11,9 +12,16 @@ using namespace std;
 class GTDLevel
 {
 public:
-	GTDLevel();
+	GTDLevel(char *filename, GTDRect *s, GTDWaypoint *way);
 	~GTDLevel();
+	
+	bool init(char *filename);
+	int getNumTypes(GTDUnit::GTDWaveUnit w);
+
+	GTDRect * getSpawn();
+	GTDWaypoint * getWaypoint();
 private:
-	std::vector<GTDUnit *> units;
+	std::map<GTDUnit::GTDWaveUnit, int> unitMap;
+	GTDRect *spawn;
 	GTDWaypoint *waypoint; //waypoint for units to take
 };

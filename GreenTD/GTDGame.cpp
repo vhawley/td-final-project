@@ -41,6 +41,9 @@ void GTDGame::run()
 	screenX = (map.getMapW() * map.getTileW() - S_WIDTH) / 2; //initial screen position
 	screenY = (map.getMapH() * map.getTileH() - S_HEIGHT) / 2;
 
+	GTDRect *testRect = new GTDRect(1500, 250, 100, 100);
+	map.spawnLevel(new GTDLevel("./assets/dat/level1.dat", testRect, NULL));
+
 
 	GTDTimer tickTimer;
 	tickTimer.start();

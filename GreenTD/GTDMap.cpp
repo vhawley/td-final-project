@@ -5,14 +5,15 @@ GTDMap::GTDMap()
 	initialized = 0;
 }
 
-GTDMap::GTDMap(char *filename, SDL_Renderer *renderer)
+GTDMap::GTDMap(char *filename, SDL_Renderer *rend)
 {	
 	initialized = 0;
-	init(filename, renderer);
+	init(filename, rend);
 }
 
-bool GTDMap::init(char *filename, SDL_Renderer *renderer)
+bool GTDMap::init(char *filename, SDL_Renderer *rend)
 {
+	renderer = rend;
 	if (!initialized)
 	{
 		std::ifstream mapFile;
@@ -64,18 +65,11 @@ bool GTDMap::init(char *filename, SDL_Renderer *renderer)
 		mapH = hCounter;
 		tileW = 32;
 		tileH = 32;
-		if (!loadTextures(renderer))
+		if (!loadTextures())
 		{
 			return 0;
 		}
 		initialized = 1;
-		//printMapBoard();
-		GTDWaypoint *waypoint = new GTDWaypoint(new GTDWaypointNode(new GTDRect(2000, 500, 50, 50)));
-		waypoint->addNode(new GTDWaypointNode(new GTDRect(1800, 700, 50, 50)));
-		waypoint->addNode(new GTDWaypointNode(new GTDRect(1600, 500, 50, 50)));
-		waypoint->addNode(new GTDWaypointNode(new GTDRect(1800, 300, 50, 50)));
-		waypoint->addNode(new GTDWaypointNode(new GTDRect(2000, 764, 50, 50)));
-		addUnit(new GTDUnit(GTDUnit::VILLAGER, 2000, 100, renderer, waypoint));
 		return 1;
 	}
 	else
@@ -128,7 +122,7 @@ void GTDMap::printMapBoard()
 	}
 }
 
-bool GTDMap::loadTextures(SDL_Renderer *renderer)
+bool GTDMap::loadTextures()
 {
 	for (int i = 1; i < 355; i++)
 	{
@@ -151,6 +145,20 @@ bool GTDMap::loadTextures(SDL_Renderer *renderer)
 		}
 	}
 	return true;
+}
+
+void GTDMap::spawnLevel(GTDLevel *level)
+{
+	for (unsigned int i = 0; i < 5; i++)
+	{
+		GTDUnit::GTDWaveUnit wtype = static_cast<GTDUnit::GTDWaveUnit>(i);
+		for (unsigned int j = 0; j < level->getNumTypes(wtype); j++)
+		{
+			int spawnX = level->getSpawn()->getX() + (rand() % level->getSpawn()->getW());
+			int spawnY = level->getSpawn()->getY() + (rand() % level->getSpawn()->getH());
+			addUnit(new GTDUnit(wtype, spawnX, spawnY, renderer, *(level->getWaypoint())));
+		}
+	}
 }
 
 void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
@@ -253,6 +261,26 @@ void GTDMap::stepUnits(int timeElapsed)
 	for (unsigned int i = 0; i < units.size(); i++)
 	{
 		units.at(i).step(timeElapsed);
+		if (units.at(i).isBuilding())
+		{
+			if (!units.at(i).hasTarget())
+			{
+				for (unsigned int j = 0; j < units.size(); j++)
+				{
+					if (units.at(j).isBuilding()) //Do nothing
+					{
+
+					}
+					else
+					{
+						if (units.at(i).isWithinDistanceOfUnit(units.at(i).getAttackRange(), &units.at(j)) && !units.at(j).isDead() && !units.at(j).getInvuln())
+						{
+							units.at(i).setTarget(&units.at(j));
+						}
+					}
+				}
+			}
+		}
 	}
 }
 

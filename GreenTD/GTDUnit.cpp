@@ -32,6 +32,9 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Ren
 			bountyrange = 5;
 			attackDMG = 18;
 			attackDMGRange = 3;
+			attackRange = 300;
+			attackCooldown = 1000;
+			atkCooldownTimer = 0;
 			cost = getCost(b);
 			break;
 		case FIRE:
@@ -66,25 +69,52 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Ren
 }
 
 
-GTDUnit::GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend, GTDWaypoint *way)
+GTDUnit::GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend, GTDWaypoint way)
 {
-	renderer = rend;
 	unitType = WAVEUNIT;
+	renderer = rend;
+	waypoint = way;
+	setPosX(x);
+	setPosY(y);
+	owner = NULL;
+	cost = 0;
+	attackRange = 0;
+	if (waypoint.first)
+	{
+		issueMoveToRect(waypoint.first->rect);
+	}
 	switch (w)
 	{
 	case VILLAGER:
 		cout << "Creating VILLAGER unit..." << endl;
-		setPosX(x);
-		setPosY(y);
+		
 		collision = 28;
 		if (!loadUnitTexture("./assets/creeps/VILLAGER.bmp", renderer))
 		{
-			cout << "NORMAL tower texture load failed" << endl;
+			cout << "VILLAGER texture load failed" << endl;
 		}
 		name = "Villager";
-		owner = NULL;
+		
 		maxhealth = 50;
 		health = 50;
+		armor = 0;
+		invuln = false;
+		movespeed = 100;
+		bounty = 10;
+		bountyrange = 2;
+		attackDMG = 18;
+		attackDMGRange = 3;
+		break;
+	case SWORDSMAN:
+		cout << "Creating SWORDSMAN unit..." << endl;
+		collision = 28;
+		if (!loadUnitTexture("./assets/creeps/SWORDSMAN.bmp", renderer))
+		{
+			cout << "SWORDSMAN texture load failed" << endl;
+		}
+		name = "Swordsman";
+		maxhealth = 75;
+		health = 75;
 		armor = 2;
 		invuln = false;
 		movespeed = 100;
@@ -92,18 +122,42 @@ GTDUnit::GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend, GTD
 		bountyrange = 2;
 		attackDMG = 18;
 		attackDMGRange = 3;
-		cost = 0;
-		waypoint = way;
-		issueMoveToRect(waypoint->first->rect);
-		break;
-	case SWORDSMAN:
-		cout << "Creating SWORDSMAN unit..." << endl;
 		break;
 	case KNIGHT:
 		cout << "Creating KNIGHT unit..." << endl;
+		collision = 28;
+		if (!loadUnitTexture("./assets/creeps/KNIGHT.bmp", renderer))
+		{
+			cout << "KNIGHT texture load failed" << endl;
+		}
+		name = "Knight";
+		maxhealth = 95;
+		health = 95;
+		armor = 3;
+		invuln = false;
+		movespeed = 100;
+		bounty = 10;
+		bountyrange = 2;
+		attackDMG = 18;
+		attackDMGRange = 3;
 		break;
 	case KING:
 		cout << "Creating KING unit..." << endl;
+		collision = 28;
+		if (!loadUnitTexture("./assets/creeps/KING.bmp", renderer))
+		{
+			cout << "KING texture load failed" << endl;
+		}
+		name = "Knight";
+		maxhealth = 120;
+		health = 120;
+		armor = 5;
+		invuln = false;
+		movespeed = 100;
+		bounty = 10;
+		bountyrange = 2;
+		attackDMG = 18;
+		attackDMGRange = 3;
 		break;
 	default:
 		break;
@@ -136,31 +190,77 @@ GTDPlayer * GTDUnit::getOwner()
 	return owner;
 }
 
+void GTDUnit::setTarget(GTDUnit *u)
+{
+	target = u;
+}
+
+bool GTDUnit::hasTarget()
+{
+	if (target == NULL)
+	{
+		return false;
+	}
+	return true;
+}
+
+bool GTDUnit::isDead()
+{
+	if (health <= 0)
+	{
+		return true;
+	}
+	return false;
+}
+
+
+
 void GTDUnit::step(int timeElapsed) //time elapsed in milliseconds
 {
 	switch (unitType)
 	{
 	case BUILDING:
 		//what to do as a building every game tick. check for attack.  attack if possible
-
+		if (atkCooldownTimer <= 0 && hasTarget())
+		{
+			if (isWithinDistanceOfUnit(attackRange, target) && !target->isDead() && !target->getInvuln())
+			{
+				//issue attack
+				attackTarget();
+				atkCooldownTimer = attackCooldown;
+			}
+			else
+			{
+				std::cout << "Target not attackable anymore (range or dead or invuln)" << std::endl;
+				setTarget(NULL); //cannot attack unit anymore
+			}
+		}
+		else if (!hasTarget() && atkCooldownTimer <= 0)
+		{
+			
+		}
+		else if (atkCooldownTimer > 0)
+		{
+			atkCooldownTimer -= timeElapsed;
+		}
 		break;
 	case WAVEUNIT:
 		//what to do as a unit every game tick. 
 		if (atDestination())
 		{
 			//set next Destination
-			if (waypoint->first->next != NULL)
+			if (waypoint.first->next != NULL)
 			{
-				waypoint->advance();
-				issueMoveToRect(waypoint->first->rect);
+				waypoint.advance();
+				issueMoveToRect(waypoint.first->rect);
 			}
 			else
 			{
 				//reached the end
 			}
-			
+
 		}
-		else
+		else //move if it has a waypoint
 		{
 			//move towards center of next waypoint
 			double xC = currentDest->getX() + (double)currentDest->getW() / 2;
@@ -198,6 +298,20 @@ void GTDUnit::issueMoveToRect(GTDRect *rect)
 {
 	currentDest = rect;
 }
+
+bool GTDUnit::isWithinDistanceOfUnit(double d, GTDUnit *u)
+{
+	double dx = abs(u->getPosX() - posX);
+	double dy = abs(u->getPosY() - posY);
+
+	double distance = sqrt(dx*dx + dy*dy);
+	if (distance <= d)
+	{
+		return true;
+	}
+	return false;
+}
+
 
 bool GTDUnit::isBuilding()
 {
@@ -268,6 +382,25 @@ int GTDUnit::getAttackRange()
 	return attackRange;
 }
 
+void GTDUnit::setHealth(int h)
+{
+	if (h > 0)
+	{
+		health = std::min(maxhealth, h);
+	}
+	else
+	{
+		health = 0;
+	}
+	
+}
+
+void GTDUnit::attackTarget()
+{
+	int damageDealt = (attackDMG + (rand() % attackDMGRange) - (attackDMGRange / 2)) * (((double)100 - target->getArmor()) / 100);
+	target->setHealth(target->getHealth()-std::max(damageDealt,0));
+}
+
 
 int GTDUnit::getCollision(enum GTDBuilding b)
 {
@@ -327,14 +460,21 @@ void GTDUnit::setPosY(double y)
 
 bool GTDUnit::atDestination()
 {
-	if (posX > currentDest->getX() &&
-		posX < (currentDest->getX() + currentDest->getW()) &&
-		posY > currentDest->getY() &&
-		posY < (currentDest->getY() + currentDest->getH()))
+	if (currentDest == NULL)
 	{
 		return true;
 	}
-	return false;
+	else
+	{
+		if (posX > currentDest->getX() &&
+			posX < (currentDest->getX() + currentDest->getW()) &&
+			posY > currentDest->getY() &&
+			posY < (currentDest->getY() + currentDest->getH()))
+		{
+			return true;
+		}
+		return false;
+	}
 }
 
 

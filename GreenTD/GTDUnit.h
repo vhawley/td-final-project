@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <algorithm>
 #include <math.h>
 #include <string.h>
 #include <SDL.h>
@@ -14,12 +15,12 @@ class GTDUnit
 {
 public:
 	enum GTDUnitType{ BUILDING, WAVEUNIT };
-	enum GTDBuilding{ NORMAL, FIRE, ICE, LIGHTNING, EARTH, SPEEDASSIST, DMGASSIST };
-	enum GTDWaveUnit{ VILLAGER, SWORDSMAN, KNIGHT, KING };
+	enum GTDBuilding{ NORMAL, FIRE, ICE, LIGHTNING, EARTH, SPEEDASSIST, DMGASSIST }; //Count last for getting number of building types
+	enum GTDWaveUnit{ VILLAGER, SWORDSMAN, KNIGHT, KING }; //Count for getting number of types
 
 	GTDUnit();
 	GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Renderer *rend); //Building
-	GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend, GTDWaypoint *way); //WaveUnit
+	GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend, GTDWaypoint way); //WaveUnit
 	double getPosX();
 	double getPosY();
 	int getCollision();
@@ -31,10 +32,14 @@ public:
 
 	void issueMoveToPoint(int x, int y);
 	void issueMoveToRect(GTDRect *rect);
+	bool isWithinDistanceOfUnit(double d, GTDUnit *u);
 
 	bool isBuilding();
 	bool isWaveUnit();
 	GTDRect getCurrentDest();
+	void setTarget(GTDUnit *u);
+	bool hasTarget();
+	bool isDead();
 
 	bool isSelected();
 	int getMaxHealth();
@@ -48,6 +53,8 @@ public:
 	int getAttackDMGRange();
 	int getAttackRange();
 
+	void setHealth(int h);
+
 	static int getCollision(enum GTDBuilding b);
 	static int getCost(enum GTDBuilding b);
 
@@ -59,6 +66,8 @@ private:
 
 	bool loadUnitTexture(string fn, SDL_Renderer *renderer);
 
+	void attackTarget();
+
 	double posX;
 	double posY;
 	int collision; //width and height for collision
@@ -69,8 +78,9 @@ private:
 	string name;
 	GTDPlayer *owner; //Units must have an owner
 	enum GTDUnitType unitType;
-	GTDWaypoint *waypoint;
+	GTDWaypoint waypoint;
 	GTDRect *currentDest;
+	GTDUnit *target;
 
 	bool selected;
 	int maxhealth;
@@ -83,5 +93,7 @@ private:
 	int attackDMG;
 	int attackDMGRange;
 	int attackRange;
+	int attackCooldown;
+	int atkCooldownTimer;
 	
 };
