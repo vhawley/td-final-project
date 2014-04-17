@@ -281,6 +281,14 @@ void GTDMap::stepUnits(int timeElapsed)
 				}
 			}
 		}
+		else if (units.at(i).isWaveUnit())
+		{
+			if (units.at(i).isDead())
+			{
+				units.erase(units.begin() + i);
+				i--;
+			}
+		}
 	}
 }
 

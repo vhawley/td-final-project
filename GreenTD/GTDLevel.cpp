@@ -5,11 +5,8 @@ GTDLevel::GTDLevel(char *filename, GTDRect *s, GTDWaypoint *way)
 {
 	spawn = s;
 	//MAKE SURE TO CHANGE TO USE PARAMATER WAYPOINT
-	waypoint = new GTDWaypoint(new GTDWaypointNode(new GTDRect(2000, 500, 50, 50)));
-	waypoint->addNode(new GTDWaypointNode(new GTDRect(1800, 700, 50, 50)));
-	waypoint->addNode(new GTDWaypointNode(new GTDRect(1600, 500, 50, 50)));
-	waypoint->addNode(new GTDWaypointNode(new GTDRect(1800, 300, 50, 50)));
-	waypoint->addNode(new GTDWaypointNode(new GTDRect(2000, 764, 50, 50)));
+	waypoint = new GTDWaypoint(new GTDWaypointNode(new GTDRect(1850, 200, 25, 25)));
+	waypoint->addNode(new GTDWaypointNode(new GTDRect(1850, 1800, 25, 25)));
 	if (!init(filename))
 	{
 		std::cout << "Error loading level from file" << std::endl;

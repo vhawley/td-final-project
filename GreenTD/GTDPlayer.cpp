@@ -35,7 +35,6 @@ void GTDPlayer::processInput()
 					if (!strcmp(key, "C"))
 					{
 						std::cout << "Build mode off..." << std::endl;
-						building = 0;
 					}
 					if (!strcmp(key, "1") && building == 0)
 					{
@@ -126,6 +125,7 @@ void GTDPlayer::processInput()
 				case SDL_BUTTON_RIGHT:
 					std::cout << "Mouse2 Released" << std::endl;
 					keyDown["MOUSE2"] = false;
+					building = 0;
 					//Issue attack?
 					break;
 				case SDL_BUTTON_MIDDLE:

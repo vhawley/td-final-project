@@ -39,9 +39,9 @@ void GTDGame::run()
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
 	screenX = (map.getMapW() * map.getTileW() - S_WIDTH) / 2; //initial screen position
-	screenY = (map.getMapH() * map.getTileH() - S_HEIGHT) / 2;
+	screenY = (map.getMapH() * map.getTileH() - S_HEIGHT) / 2 - 500;
 
-	GTDRect *testRect = new GTDRect(1500, 250, 100, 100);
+	GTDRect *testRect = new GTDRect(1800, 100, 400, 150);
 	map.spawnLevel(new GTDLevel("./assets/dat/level1.dat", testRect, NULL));
 
 

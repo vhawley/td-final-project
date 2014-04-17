@@ -231,7 +231,6 @@ void GTDUnit::step(int timeElapsed) //time elapsed in milliseconds
 			}
 			else
 			{
-				std::cout << "Target not attackable anymore (range or dead or invuln)" << std::endl;
 				setTarget(NULL); //cannot attack unit anymore
 			}
 		}
@@ -246,40 +245,43 @@ void GTDUnit::step(int timeElapsed) //time elapsed in milliseconds
 		break;
 	case WAVEUNIT:
 		//what to do as a unit every game tick. 
-		if (atDestination())
+		if (!isDead())
 		{
-			//set next Destination
-			if (waypoint.first->next != NULL)
+			if (atDestination())
 			{
-				waypoint.advance();
-				issueMoveToRect(waypoint.first->rect);
+				//set next Destination
+				if (waypoint.first->next != NULL)
+				{
+					waypoint.advance();
+					issueMoveToRect(waypoint.first->rect);
+				}
+				else
+				{
+					//reached the end
+				}
+
 			}
-			else
+			else //move if it has a waypoint
 			{
-				//reached the end
-			}
+				//move towards center of next waypoint
+				double xC = currentDest->getX() + (double)currentDest->getW() / 2;
+				double yC = currentDest->getY() + (double)currentDest->getH() / 2;
 
-		}
-		else //move if it has a waypoint
-		{
-			//move towards center of next waypoint
-			double xC = currentDest->getX() + (double)currentDest->getW() / 2;
-			double yC = currentDest->getY() + (double)currentDest->getH() / 2;
+				double dx = xC - posX;
+				double dy = yC - posY;
 
-			double dx = xC - posX;
-			double dy = yC - posY;
+				double walkangle = atan(dy / dx);
 
-			double walkangle = atan(dy / dx);
-
-			if (dx < 0) //only dx < 0 because cos is always positive. sin can return - values!!
-			{
-				posX -= cos(walkangle) * ((double)timeElapsed / 1000) * movespeed;
-				posY -= sin(walkangle) * ((double)timeElapsed / 1000) * movespeed;
-			}
-			else
-			{
-				posX += cos(walkangle) * ((double)timeElapsed / 1000) * movespeed;
-				posY += sin(walkangle) * ((double)timeElapsed / 1000) * movespeed;
+				if (dx < 0) //only dx < 0 because cos is always positive. sin can return - values!!
+				{
+					posX -= cos(walkangle) * ((double)timeElapsed / 1000) * movespeed;
+					posY -= sin(walkangle) * ((double)timeElapsed / 1000) * movespeed;
+				}
+				else
+				{
+					posX += cos(walkangle) * ((double)timeElapsed / 1000) * movespeed;
+					posY += sin(walkangle) * ((double)timeElapsed / 1000) * movespeed;
+				}
 			}
 		}
 		break;
@@ -399,6 +401,12 @@ void GTDUnit::attackTarget()
 {
 	int damageDealt = (attackDMG + (rand() % attackDMGRange) - (attackDMGRange / 2)) * (((double)100 - target->getArmor()) / 100);
 	target->setHealth(target->getHealth()-std::max(damageDealt,0));
+	if (target->isDead())
+	{
+		int moneyEarned = (target->getBounty() + (rand() % target->getBountyrange()) - (target->getBountyrange() / 2));
+		owner->earn(moneyEarned);
+		std::cout << "Player earned " << moneyEarned << " money.  He now has " << owner->getMoney() << " money." << std::endl;
+	}
 }
 
 
