@@ -23,6 +23,7 @@ public:
 	void drawBuildBox();
 	void drawBoxOnSelectedUnits();
 	void buildPlayerBuilding();
+	void performSelection();
 private:
 	bool loadTextures();
 	int IsGameOver;

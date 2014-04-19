@@ -337,6 +337,18 @@ GTDRect GTDUnit::getCurrentDest()
 	return *currentDest;
 }
 
+void GTDUnit::select()
+{
+	selected = true;
+}
+
+
+void GTDUnit::unselect()
+{
+	selected = false;
+}
+
+
 bool GTDUnit::isSelected()
 {
 	return selected;

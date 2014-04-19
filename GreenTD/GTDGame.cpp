@@ -58,17 +58,20 @@ void GTDGame::run()
 		//clear renderer
 		SDL_RenderClear(renderer);
 
+		//get mouse state
+		SDL_GetMouseState(&mouseX, &mouseY);
+
 		//handle input
 		player.processInput();
+
+		//select units
+		performSelection();
 
 		//Step units
 		map.stepUnits(timeElapsed);
 
 		//Add building to map if queued
 		buildPlayerBuilding();
-
-		//get mouse state
-		SDL_GetMouseState(&mouseX, &mouseY);
 
 		//Draw map
 		map.draw(screenX, screenY, renderer);
@@ -254,3 +257,28 @@ void GTDGame::buildPlayerBuilding()
 	}
 }
 
+void GTDGame::performSelection()
+{
+	if (player.isSelecting())
+	{
+		std::cout << "Player is selecting... " << std::endl;
+		GTDRect *selectRect = new GTDRect();
+		int selectX = screenX + std::min(mouseX, player.getOldMouseX());
+		int selectY = screenY + std::min(mouseY, player.getOldMouseY());
+		int selectW = std::abs(mouseX - player.getOldMouseX());
+		int selectH = std::abs(mouseY - player.getOldMouseY());
+		if (selectW <= 2 && selectH <= 2) //adjust select rect when clicking not box selecting
+		{
+			selectX -= map.getTileW() / 2;
+			selectY -= map.getTileH() / 2;
+			selectW = map.getTileW();
+			selectH = map.getTileH();
+		}
+		selectRect->setX(selectX); //min to allow box selection in all directions
+		selectRect->setY(selectY);//min to allow box selection in all directions 
+		selectRect->setW(selectW);
+		selectRect->setH(selectH);
+		map.selectUnitsInRect(selectRect);
+		player.endQueueSelection();
+	}
+}

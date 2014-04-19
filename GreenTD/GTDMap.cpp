@@ -235,6 +235,18 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 				SDL_RenderFillRect(renderer, &healthRect);
 			}
 
+			if (units.at(uindex).isSelected())
+			{
+				SDL_Rect boxRect;
+				boxRect.x = unitRect.x - 1;
+				boxRect.y = unitRect.y - 1;
+				boxRect.w = unitRect.w + 2;
+				boxRect.h = unitRect.h + 2;
+				SDL_SetRenderDrawColor(renderer, 0, 255, 255, 1);
+				SDL_RenderDrawRect(renderer, &unitRect);
+				SDL_RenderDrawRect(renderer, &boxRect); //Draw 2 boxes to make it easier to see....
+			}
+
 			/* 
 			SDL_Rect destRect;
 			destRect.x = units.at(uindex).getCurrentDest().getX() - x;
@@ -288,6 +300,31 @@ void GTDMap::stepUnits(int timeElapsed)
 				units.erase(units.begin() + i);
 				i--;
 			}
+		}
+	}
+}
+
+void GTDMap::selectUnitsInRect(GTDRect *rect)
+{
+	for (unsigned int i = 0; i < units.size(); i++)
+	{
+		if (rectContainsUnit(*rect, units.at(i)))
+		{
+			/*std::cout << "Selecting " << i << std::endl;*/
+			units.at(i).select();
+			//if (units.at(i).isSelected())
+			//{
+			//	std::cout << "Unit " << i << " is selected. " << std::endl;
+			//}
+			//else
+			//{
+			//	std::cout << "Unit " << i << " is NOT selected. SEOMETHING IS WRONG" << std::endl;
+			//}
+		}
+		else
+		{
+			//std::cout << "Unselecting " << i << std::endl;
+			units.at(i).unselect();
 		}
 	}
 }

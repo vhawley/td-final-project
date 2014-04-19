@@ -30,6 +30,8 @@ public:
 	void addUnit(GTDUnit *u);
 	void stepUnits(int timeElapsed);
 
+	void selectUnitsInRect(GTDRect *rect);
+
 	int getMapW();
 	int getMapH();
 	int getTileW();

@@ -15,7 +15,13 @@ public:
 	void processInput();
 	int getOver();
 
+
 	bool isHolding(string key);
+
+	void queueSelection();
+	bool isSelecting();
+	void endQueueSelection();
+
 	void queueBuilding();
 	bool hasBuildingQueued();
 	int getCurrentlySelectedBuilding();
@@ -33,6 +39,7 @@ private:
 	bool building;
 	int currentlySelectedBuilding;
 	bool buildingQueued;
+	bool selecting;
 
 	map<string, bool> keyDown;
 

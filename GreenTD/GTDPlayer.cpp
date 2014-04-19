@@ -121,6 +121,10 @@ void GTDPlayer::processInput()
 					{
 						queueBuilding();
 					}
+					else
+					{
+						queueSelection();
+					}
 					break;
 				case SDL_BUTTON_RIGHT:
 					std::cout << "Mouse2 Released" << std::endl;
@@ -151,6 +155,23 @@ void GTDPlayer::processInput()
 bool GTDPlayer::isHolding(string key)
 {
 	return keyDown[key];
+}
+
+void GTDPlayer::queueSelection()
+{
+	selecting = true;
+}
+
+bool GTDPlayer::isSelecting()
+{
+	return selecting;
+}
+
+
+void GTDPlayer::endQueueSelection()
+{
+	selecting = false;
+
 }
 
 void GTDPlayer::queueBuilding()

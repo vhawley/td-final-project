@@ -41,7 +41,10 @@ public:
 	bool hasTarget();
 	bool isDead();
 
+	void select();
+	void unselect();
 	bool isSelected();
+
 	int getMaxHealth();
 	int getHealth();
 	int getArmor();
