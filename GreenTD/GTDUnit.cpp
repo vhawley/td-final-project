@@ -74,6 +74,7 @@ GTDUnit::GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend, GTD
 	unitType = WAVEUNIT;
 	renderer = rend;
 	waypoint = way;
+	reachedEnd = false;
 	setPosX(x);
 	setPosY(y);
 	owner = NULL;
@@ -223,7 +224,7 @@ void GTDUnit::step(int timeElapsed) //time elapsed in milliseconds
 		//what to do as a building every game tick. check for attack.  attack if possible
 		if (atkCooldownTimer <= 0 && hasTarget())
 		{
-			if (isWithinDistanceOfUnit(attackRange, target) && !target->isDead() && !target->getInvuln())
+			if (isWithinDistanceOfUnit(attackRange, target) && !target->isDead() && !target->getInvuln() && !target->didReachEnd())
 			{
 				//issue attack
 				attackTarget();
@@ -257,7 +258,7 @@ void GTDUnit::step(int timeElapsed) //time elapsed in milliseconds
 				}
 				else
 				{
-					//reached the end
+					reachedEnd = true;
 				}
 
 			}
@@ -352,6 +353,11 @@ void GTDUnit::unselect()
 bool GTDUnit::isSelected()
 {
 	return selected;
+}
+
+bool GTDUnit::didReachEnd()
+{
+	return reachedEnd;
 }
 
 int GTDUnit::getMaxHealth()

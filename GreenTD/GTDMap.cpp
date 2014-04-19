@@ -3,6 +3,7 @@
 GTDMap::GTDMap()
 {
 	initialized = 0;
+	lives = 50;
 }
 
 GTDMap::GTDMap(char *filename, SDL_Renderer *rend)
@@ -307,6 +308,16 @@ void GTDMap::stepUnits(int timeElapsed)
 				units.erase(units.begin() + i);
 				i--;
 			}
+			else if(units.at(i).didReachEnd())
+			{
+				lives--;
+				units.erase(units.begin() + i);
+				i--;
+				if (lives <= 0)
+				{
+					//gg
+				}
+			}
 		}
 	}
 }
@@ -354,6 +365,10 @@ int GTDMap::getTileH()
 	return tileH;
 }
 
+int GTDMap::getLives()
+{
+	return lives;
+}
 
 bool GTDMap::spaceIsBuildable(int m, int n)
 {

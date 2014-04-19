@@ -44,6 +44,7 @@ public:
 	void select();
 	void unselect();
 	bool isSelected();
+	bool didReachEnd();
 
 	int getMaxHealth();
 	int getHealth();
@@ -84,6 +85,7 @@ private:
 	GTDWaypoint waypoint;
 	GTDRect *currentDest;
 	GTDUnit *target;
+	bool reachedEnd;
 
 	bool selected;
 	int maxhealth;

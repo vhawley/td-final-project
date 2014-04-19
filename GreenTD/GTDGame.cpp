@@ -318,15 +318,21 @@ void GTDGame::drawUI()
 	textColor.a = 1;
 	char kills[8] = "Kills: ";
 	char killCount[5];
+	char lives[8] = "Lives: ";
+	char livesCount[5];
 	char money[8] = "Money: ";
 	char moneyCount[10];
 	sprintf_s(killCount, "%d", player.getKills());
+	sprintf_s(livesCount, "%d", map.getLives());
 	sprintf_s(moneyCount, "%d", player.getMoney());
 	SDL_Surface *killsTextSurface = TTF_RenderText_Solid(font, kills, textColor);
 	SDL_Surface *killsCountSurface = TTF_RenderText_Solid(font, killCount, textColor);
+	SDL_Surface *livesTextSurface = TTF_RenderText_Solid(font, lives, textColor);
+	SDL_Surface *livesCountSurface = TTF_RenderText_Solid(font, livesCount, textColor);
 	SDL_Surface *moneyTextSurface = TTF_RenderText_Solid(font, money, textColor);
 	SDL_Surface *moneyCountSurface = TTF_RenderText_Solid(font, moneyCount, textColor);
-	if (!killsTextSurface || !killsCountSurface || !moneyTextSurface || !moneyCountSurface)
+
+	if (!killsTextSurface || !killsCountSurface || !livesTextSurface || !livesCountSurface || !moneyTextSurface || !moneyCountSurface)
 	{
 		std::cout << "Can't create surface: " << TTF_GetError() << std::endl;
 	}
@@ -334,11 +340,15 @@ void GTDGame::drawUI()
 	{
 		SDL_Texture *killsTextTexture = SDL_CreateTextureFromSurface(renderer, killsTextSurface);
 		SDL_Texture *killCountTexture = SDL_CreateTextureFromSurface(renderer, killsCountSurface);
+		SDL_Texture *livesTextTexture = SDL_CreateTextureFromSurface(renderer, livesTextSurface);
+		SDL_Texture *livesCountTexture = SDL_CreateTextureFromSurface(renderer, livesCountSurface);
 		SDL_Texture *moneyTextTexture = SDL_CreateTextureFromSurface(renderer, moneyTextSurface);
 		SDL_Texture *moneyCountTexture = SDL_CreateTextureFromSurface(renderer, moneyCountSurface);
 
 		SDL_FreeSurface(killsTextSurface);
 		SDL_FreeSurface(killsCountSurface);
+		SDL_FreeSurface(livesTextSurface);
+		SDL_FreeSurface(livesCountSurface);
 		SDL_FreeSurface(moneyTextSurface);
 		SDL_FreeSurface(moneyCountSurface);
 
@@ -352,6 +362,16 @@ void GTDGame::drawUI()
 		killCountRect.y = S_HEIGHT - UIheight;
 		killCountRect.w = strlen(killCount) * 8;
 		killCountRect.h = UIheight;
+		SDL_Rect livesTextRect;
+		livesTextRect.x = killCountRect.x + killCountRect.w + 8;
+		livesTextRect.y = S_HEIGHT - UIheight;
+		livesTextRect.w = strlen(lives) * 10;
+		livesTextRect.h = UIheight;
+		SDL_Rect livesCountRect;
+		livesCountRect.x = livesTextRect.x + livesTextRect.w + 2;
+		livesCountRect.y = S_HEIGHT - UIheight;
+		livesCountRect.w = strlen(livesCount) * 10;
+		livesCountRect.h = UIheight;
 		SDL_Rect moneyCountRect;
 		moneyCountRect.w = strlen(moneyCount) * 10;
 		moneyCountRect.x = S_WIDTH - moneyCountRect.w - 4;
@@ -363,14 +383,17 @@ void GTDGame::drawUI()
 		moneyTextRect.y = S_HEIGHT - UIheight;
 		moneyTextRect.h = UIheight;
 
-
 		SDL_RenderCopy(renderer, killsTextTexture, NULL, &killsTextRect);
 		SDL_RenderCopy(renderer, killCountTexture, NULL, &killCountRect);
+		SDL_RenderCopy(renderer, livesTextTexture, NULL, &livesTextRect);
+		SDL_RenderCopy(renderer, livesCountTexture, NULL, &livesCountRect);
 		SDL_RenderCopy(renderer, moneyTextTexture, NULL, &moneyTextRect);
 		SDL_RenderCopy(renderer, moneyCountTexture, NULL, &moneyCountRect);
 
 		SDL_DestroyTexture(killsTextTexture);
 		SDL_DestroyTexture(killCountTexture);
+		SDL_DestroyTexture(livesTextTexture);
+		SDL_DestroyTexture(livesCountTexture);
 		SDL_DestroyTexture(moneyTextTexture);
 		SDL_DestroyTexture(moneyCountTexture);
 	}

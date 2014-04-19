@@ -36,6 +36,7 @@ public:
 	int getMapH();
 	int getTileW();
 	int getTileH();
+	int getLives();
 	bool spaceIsBuildable(int m, int n);
 	static bool rectContainsUnit(GTDRect rect, GTDUnit unit); //If rect contains unit, return yes
 	~GTDMap();
@@ -47,6 +48,7 @@ private:
 	int mapH;
 	int tileW;
 	int tileH;
+	int lives;
 	SDL_Renderer *renderer;
 	std::vector<SDL_Texture *> textures;
 	std::vector<GTDUnit> units; //Units will be displayed on map but have ownership through their own "owner" pointer. *map should not be handling players*
