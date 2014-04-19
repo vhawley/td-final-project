@@ -242,7 +242,14 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 				boxRect.y = unitRect.y - 1;
 				boxRect.w = unitRect.w + 2;
 				boxRect.h = unitRect.h + 2;
-				SDL_SetRenderDrawColor(renderer, 0, 255, 255, 1);
+				if (units.at(uindex).isBuilding())
+				{
+					SDL_SetRenderDrawColor(renderer, 50, 50, 255, 1);
+				}
+				else
+				{
+					SDL_SetRenderDrawColor(renderer, 255, 50, 50, 1);
+				}
 				SDL_RenderDrawRect(renderer, &unitRect);
 				SDL_RenderDrawRect(renderer, &boxRect); //Draw 2 boxes to make it easier to see....
 			}

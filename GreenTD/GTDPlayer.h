@@ -30,8 +30,11 @@ public:
 	int getOldMouseX();
 	int getOldMouseY();
 	int getMoney();
+	int getKills();
 	void spend(int cost);
 	void earn(int bounty);
+	void addKill();
+
 private:
 	SDL_Event e;
 	const char *key;
@@ -47,5 +50,6 @@ private:
 	int oldMouseY;
 	int over;
 	int money;
+	int kills;
 	vector<int> selectedUnits;
 };

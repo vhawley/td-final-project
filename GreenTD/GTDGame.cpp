@@ -7,6 +7,16 @@
 GTDGame::GTDGame()
 {
 	IsGameOver = 0;
+	UIheight = 24;
+	defColor.r = 0;
+	defColor.g = 0;
+	defColor.b = 0;
+	defColor.a = 1;
+}
+GTDGame::~GTDGame()
+{
+	TTF_CloseFont(font);
+	SDL_Quit();
 }
 
 bool GTDGame::init()
@@ -30,13 +40,26 @@ bool GTDGame::init()
 	{
 		return false;
 	}
+	if (TTF_Init() == -1)
+	{
+		std::cout << "TTF_Init error: " << TTF_GetError() << std::endl;
+		return false;
+	}
+	else
+	{
+		font = TTF_OpenFont("HARNGTON.TTF", 19);
+		if (!font)
+		{
+			std::cout << "TTF_OpenFont error: " << TTF_GetError() << std::endl;
+			return false;
+		}
+	}
 	return true;
 }
 
 void GTDGame::run()
 {
 	//Default color = black
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
 	screenX = (map.getMapW() * map.getTileW() - S_WIDTH) / 2; //initial screen position
 	screenY = (map.getMapH() * map.getTileH() - S_HEIGHT) / 2 - 500;
@@ -51,6 +74,9 @@ void GTDGame::run()
 
 	while (!IsGameOver)
 	{
+		//Set default color
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+
 		//Get time elapsed 
 		timeElapsed = tickTimer.getTicks();
 		tickTimer.start();
@@ -82,14 +108,14 @@ void GTDGame::run()
 		//Draw blue rect on current tile if building
 		drawBuildBox();
 
-		//Draw blue rect on current tile if building
-		drawBuildBox();
+		//Draw UI
+		drawUI();
 
 		//Present Contents to screen
 		SDL_RenderPresent(renderer);
 
 		//Moves screen position based on mouse position
-		moveScreen();
+		moveScreen(timeElapsed);
 
 		if (player.getOver())
 		{
@@ -117,26 +143,25 @@ void GTDGame::quit()
 {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
-	SDL_Quit();
 }
 
-void GTDGame::moveScreen()
+void GTDGame::moveScreen(int timeElapsed) //move screen independent of frame rate
 {
 	if (mouseX < 5 || player.isHolding("Left"))
 	{
-		screenX = std::max(0, screenX - 2);
+		screenX = std::max(0, screenX - (2 * timeElapsed));
 	}
 	if (mouseY < 5 || player.isHolding("Up"))
 	{
-		screenY = std::max(0, screenY - 2);
+		screenY = std::max(0, screenY - (2 * timeElapsed));
 	}
 	if (mouseX > S_WIDTH - 5 || player.isHolding("Right"))
 	{
-		screenX = std::min(map.getTileW() * map.getMapW() - S_WIDTH, screenX + 2);
+		screenX = std::min(map.getTileW() * map.getMapW() - S_WIDTH, screenX + (2 * timeElapsed));
 	}
 	if (mouseY > S_HEIGHT - 5 || player.isHolding("Down"))
 	{
-		screenY = std::min(map.getTileH() * map.getMapH() - S_HEIGHT, screenY + 2);
+		screenY = std::min(map.getTileH() * map.getMapH() - S_HEIGHT + UIheight, screenY + (2 * timeElapsed));
 	}
 }
 
@@ -216,12 +241,6 @@ void GTDGame::drawBuildBox()
 	}
 }
 
-void GTDGame::drawBoxOnSelectedUnits()
-{
-
-
-}
-
 void GTDGame::buildPlayerBuilding()
 {
 	if (player.hasBuildingQueued())
@@ -280,5 +299,79 @@ void GTDGame::performSelection()
 		selectRect->setH(selectH);
 		map.selectUnitsInRect(selectRect);
 		player.endQueueSelection();
+	}
+}
+
+void GTDGame::drawUI()
+{
+	SDL_Rect UIRect;
+	UIRect.x = 0;
+	UIRect.y = S_HEIGHT - UIheight;
+	UIRect.w = S_WIDTH;
+	UIRect.h = UIheight;
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_RenderFillRect(renderer, &UIRect);
+	SDL_Color textColor;
+	textColor.r = 255;
+	textColor.g = 255;
+	textColor.b = 255;
+	textColor.a = 1;
+	char kills[8] = "Kills: ";
+	char killCount[5];
+	char money[8] = "Money: ";
+	char moneyCount[10];
+	sprintf_s(killCount, "%d", player.getKills());
+	sprintf_s(moneyCount, "%d", player.getMoney());
+	SDL_Surface *killsTextSurface = TTF_RenderText_Solid(font, kills, textColor);
+	SDL_Surface *killsCountSurface = TTF_RenderText_Solid(font, killCount, textColor);
+	SDL_Surface *moneyTextSurface = TTF_RenderText_Solid(font, money, textColor);
+	SDL_Surface *moneyCountSurface = TTF_RenderText_Solid(font, moneyCount, textColor);
+	if (!killsTextSurface || !killsCountSurface || !moneyTextSurface || !moneyCountSurface)
+	{
+		std::cout << "Can't create surface: " << TTF_GetError() << std::endl;
+	}
+	else
+	{
+		SDL_Texture *killsTextTexture = SDL_CreateTextureFromSurface(renderer, killsTextSurface);
+		SDL_Texture *killCountTexture = SDL_CreateTextureFromSurface(renderer, killsCountSurface);
+		SDL_Texture *moneyTextTexture = SDL_CreateTextureFromSurface(renderer, moneyTextSurface);
+		SDL_Texture *moneyCountTexture = SDL_CreateTextureFromSurface(renderer, moneyCountSurface);
+
+		SDL_FreeSurface(killsTextSurface);
+		SDL_FreeSurface(killsCountSurface);
+		SDL_FreeSurface(moneyTextSurface);
+		SDL_FreeSurface(moneyCountSurface);
+
+		SDL_Rect killsTextRect;
+		killsTextRect.x = 4;
+		killsTextRect.y = S_HEIGHT - UIheight;
+		killsTextRect.w = strlen(kills) * 8;
+		killsTextRect.h = UIheight;
+		SDL_Rect killCountRect;
+		killCountRect.x = killsTextRect.x + killsTextRect.w + 2;
+		killCountRect.y = S_HEIGHT - UIheight;
+		killCountRect.w = strlen(killCount) * 8;
+		killCountRect.h = UIheight;
+		SDL_Rect moneyCountRect;
+		moneyCountRect.w = strlen(moneyCount) * 10;
+		moneyCountRect.x = S_WIDTH - moneyCountRect.w - 4;
+		moneyCountRect.y = S_HEIGHT - UIheight;
+		moneyCountRect.h = UIheight;
+		SDL_Rect moneyTextRect;
+		moneyTextRect.w = strlen(money) * 10;
+		moneyTextRect.x = S_WIDTH - moneyCountRect.w - moneyTextRect.w - 4;
+		moneyTextRect.y = S_HEIGHT - UIheight;
+		moneyTextRect.h = UIheight;
+
+
+		SDL_RenderCopy(renderer, killsTextTexture, NULL, &killsTextRect);
+		SDL_RenderCopy(renderer, killCountTexture, NULL, &killCountRect);
+		SDL_RenderCopy(renderer, moneyTextTexture, NULL, &moneyTextRect);
+		SDL_RenderCopy(renderer, moneyCountTexture, NULL, &moneyCountRect);
+
+		SDL_DestroyTexture(killsTextTexture);
+		SDL_DestroyTexture(killCountTexture);
+		SDL_DestroyTexture(moneyTextTexture);
+		SDL_DestroyTexture(moneyCountTexture);
 	}
 }

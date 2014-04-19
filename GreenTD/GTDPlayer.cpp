@@ -4,6 +4,7 @@ GTDPlayer::GTDPlayer()
 {
 	money = 750;
 	over = 0;
+	kills = 0;
 	lastkey = "NULL";
 }
 
@@ -80,7 +81,7 @@ void GTDPlayer::processInput()
 				std::cout << "Key released: " << key << std::endl;
 				lastkey = "NULL";
 				keyDown[key] = false;
-				if (!strcmp(key, "Q"))
+				if (!strcmp(key, "Escape"))
 				{
 					over = 1;
 				}
@@ -216,6 +217,12 @@ int GTDPlayer::getMoney()
 	return money;
 }
 
+
+int GTDPlayer::getKills()
+{
+	return kills;
+}
+
 void GTDPlayer::spend(int cost)
 {
 	money -= cost;
@@ -224,4 +231,10 @@ void GTDPlayer::spend(int cost)
 void GTDPlayer::earn(int bounty)
 {
 	money += bounty;
+}
+
+
+void GTDPlayer::addKill()
+{
+	kills++;
 }

@@ -417,6 +417,7 @@ void GTDUnit::attackTarget()
 	{
 		int moneyEarned = (target->getBounty() + (rand() % target->getBountyrange()) - (target->getBountyrange() / 2));
 		owner->earn(moneyEarned);
+		owner->addKill();
 		std::cout << "Player earned " << moneyEarned << " money.  He now has " << owner->getMoney() << " money." << std::endl;
 	}
 }

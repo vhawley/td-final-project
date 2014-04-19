@@ -33,5 +33,6 @@ int main(int argc, char **argv)
 		std::cout << "Could not initialize SDL or game. Exiting!" << std::endl;
 		return 1;
 	}
+	SDL_Quit();
 	return 0;
 }
