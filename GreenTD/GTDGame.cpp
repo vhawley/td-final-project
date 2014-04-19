@@ -41,7 +41,7 @@ void GTDGame::run()
 	screenX = (map.getMapW() * map.getTileW() - S_WIDTH) / 2; //initial screen position
 	screenY = (map.getMapH() * map.getTileH() - S_HEIGHT) / 2 - 500;
 
-	GTDRect *testRect = new GTDRect(1800, 100, 400, 150);
+	GTDRect *testRect = new GTDRect(1700, 50, 400, 200);
 	map.spawnLevel(new GTDLevel("./assets/dat/level1.dat", testRect, NULL));
 
 
@@ -249,8 +249,8 @@ void GTDGame::buildPlayerBuilding()
 			{
 				std::cout << "You only have " << player.getMoney() << " money. A " << btype << " tower costs " << cost << " money.";
 			}
-			player.endQueueBuilding();
 		}
+		player.endQueueBuilding();
 	}
 }
 
