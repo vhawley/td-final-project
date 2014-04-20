@@ -29,10 +29,10 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Ren
 			invuln = false;
 			movespeed = 0;
 			bounty = 50;
-			bountyrange = 5;
+			bountyrange = 0;
 			attackDMG = 18;
 			attackDMGRange = 3;
-			attackRange = 300;
+			attackRange = 200;
 			attackCooldown = 1000;
 			atkCooldownTimer = 0;
 			cost = getCost(b);
@@ -191,9 +191,22 @@ GTDPlayer * GTDUnit::getOwner()
 	return owner;
 }
 
+GTDUnit * GTDUnit::getTarget()
+{
+	return target;
+}
+
+
 void GTDUnit::setTarget(GTDUnit *u)
 {
-	target = u;
+	if (!u)
+	{
+		target = NULL;
+	}
+	else
+	{
+		target = u;
+	}
 }
 
 bool GTDUnit::hasTarget()
@@ -214,7 +227,10 @@ bool GTDUnit::isDead()
 	return false;
 }
 
-
+void GTDUnit::setOnMap(bool on)
+{
+	onMap = on;
+}
 
 void GTDUnit::step(int timeElapsed) //time elapsed in milliseconds
 {
@@ -224,15 +240,14 @@ void GTDUnit::step(int timeElapsed) //time elapsed in milliseconds
 		//what to do as a building every game tick. check for attack.  attack if possible
 		if (atkCooldownTimer <= 0 && hasTarget())
 		{
-			if (isWithinDistanceOfUnit(attackRange, target) && !target->isDead() && !target->getInvuln() && !target->didReachEnd())
+			if (target->isDead() || target->didReachEnd() || target->getInvuln())
 			{
-				//issue attack
+				setTarget(NULL);
+			}
+			else if (isWithinDistanceOfUnit(attackRange, target))
+			{
 				attackTarget();
 				atkCooldownTimer = attackCooldown;
-			}
-			else
-			{
-				setTarget(NULL); //cannot attack unit anymore
 			}
 		}
 		else if (!hasTarget() && atkCooldownTimer <= 0)
@@ -246,7 +261,7 @@ void GTDUnit::step(int timeElapsed) //time elapsed in milliseconds
 		break;
 	case WAVEUNIT:
 		//what to do as a unit every game tick. 
-		if (!isDead())
+		if (isOnMap())
 		{
 			if (atDestination())
 			{
@@ -304,8 +319,12 @@ void GTDUnit::issueMoveToRect(GTDRect *rect)
 
 bool GTDUnit::isWithinDistanceOfUnit(double d, GTDUnit *u)
 {
-	double dx = abs(u->getPosX() - posX);
-	double dy = abs(u->getPosY() - posY);
+	if (!u->isOnMap())
+	{
+		return false;
+	}
+	double dx = u->getPosX() - posX;
+	double dy = u->getPosY() - posY;
 
 	double distance = sqrt(dx*dx + dy*dy);
 	if (distance <= d)
@@ -315,6 +334,10 @@ bool GTDUnit::isWithinDistanceOfUnit(double d, GTDUnit *u)
 	return false;
 }
 
+bool GTDUnit::isOnMap()
+{
+	return onMap;
+}
 
 bool GTDUnit::isBuilding()
 {
@@ -418,10 +441,19 @@ void GTDUnit::setHealth(int h)
 void GTDUnit::attackTarget()
 {
 	int damageDealt = (attackDMG + (rand() % attackDMGRange) - (attackDMGRange / 2)) * (((double)100 - target->getArmor()) / 100);
-	target->setHealth(target->getHealth()-std::max(damageDealt,0));
+	target->setHealth(target->getHealth() - std::max(damageDealt, 0));
+	int test = 0;
 	if (target->isDead())
 	{
-		int moneyEarned = (target->getBounty() + (rand() % target->getBountyrange()) - (target->getBountyrange() / 2));
+		int moneyEarned;
+		if (target->getBountyrange() == 0)
+		{
+			moneyEarned = target->getBounty();
+		}
+		else
+		{
+			moneyEarned = target->getBounty() + ((rand() % target->getBountyrange()) - (target->getBountyrange() / 2));
+		} 
 		owner->earn(moneyEarned);
 		owner->addKill();
 		std::cout << "Player earned " << moneyEarned << " money.  He now has " << owner->getMoney() << " money." << std::endl;

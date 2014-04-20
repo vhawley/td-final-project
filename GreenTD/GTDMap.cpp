@@ -83,7 +83,7 @@ bool GTDMap::init(char *filename, SDL_Renderer *rend)
 
 int GTDMap::getMapBoard(int m, int n)
 {
-	if (m > mapH || n > mapW)
+	if (m >= mapH || n >= mapW)
 	{
 		return -1;
 	}
@@ -205,74 +205,91 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 	//Draw units on map
 	for (unsigned int uindex = 0; uindex < units.size(); uindex++)
 	{
-		GTDRect screenRect;
-		screenRect.setX(x - units.at(uindex).getCollision()/2);
-		screenRect.setY(y - units.at(uindex).getCollision()/2);
-		screenRect.setW(x + 1280 + units.at(uindex).getCollision() / 2);
-		screenRect.setH(y + 720 + units.at(uindex).getCollision() / 2);
-		
-		if (rectContainsUnit(screenRect, units.at(uindex))) //only draw if in screen bounds for performance
+		if (units.at(uindex).isOnMap())
 		{
-			SDL_Rect unitRect;
-			unitRect.x = units.at(uindex).getPosX() - x - units.at(uindex).getCollision() / 2;
-			unitRect.y = units.at(uindex).getPosY() - y - units.at(uindex).getCollision() / 2;
-			unitRect.w = units.at(uindex).getCollision();
-			unitRect.h = units.at(uindex).getCollision();
-			SDL_RenderCopy(renderer, units.at(uindex).getTexture(), NULL, &unitRect);
+			GTDRect screenRect;
+			screenRect.setX(x - units.at(uindex).getCollision() / 2);
+			screenRect.setY(y - units.at(uindex).getCollision() / 2);
+			screenRect.setW(x + 1280 + units.at(uindex).getCollision() / 2);
+			screenRect.setH(y + 720 + units.at(uindex).getCollision() / 2);
 
-			if (units.at(uindex).isWaveUnit())
+			if (rectContainsUnit(screenRect, units.at(uindex))) //only draw if in screen bounds for performance
 			{
-				double healthPct = (double) units.at(uindex).getHealth() / units.at(uindex).getMaxHealth();
-				SDL_Rect healthRect;
-				healthRect.x = unitRect.x - 4;
-				healthRect.y = unitRect.y - 10;
-				healthRect.w = unitRect.w + 8; //Red = remaining
-				healthRect.h = 6;
-				SDL_SetRenderDrawColor(renderer, 255, 50, 50, 1); 
-				SDL_RenderFillRect(renderer, &healthRect);
+				SDL_Rect unitRect;
+				unitRect.x = units.at(uindex).getPosX() - x - units.at(uindex).getCollision() / 2;
+				unitRect.y = units.at(uindex).getPosY() - y - units.at(uindex).getCollision() / 2;
+				unitRect.w = units.at(uindex).getCollision();
+				unitRect.h = units.at(uindex).getCollision();
+				SDL_RenderCopy(renderer, units.at(uindex).getTexture(), NULL, &unitRect);
 
-				healthRect.w *= healthPct; //Green = remaining health
-				SDL_SetRenderDrawColor(renderer, 50, 255, 50, 1);
-				SDL_RenderFillRect(renderer, &healthRect);
-			}
-
-			if (units.at(uindex).isSelected())
-			{
-				SDL_Rect boxRect;
-				boxRect.x = unitRect.x - 1;
-				boxRect.y = unitRect.y - 1;
-				boxRect.w = unitRect.w + 2;
-				boxRect.h = unitRect.h + 2;
-				if (units.at(uindex).isBuilding())
+				if (units.at(uindex).isWaveUnit())
 				{
-					SDL_SetRenderDrawColor(renderer, 50, 50, 255, 1);
-				}
-				else
-				{
+					double healthPct = (double)units.at(uindex).getHealth() / units.at(uindex).getMaxHealth();
+					SDL_Rect healthRect;
+					healthRect.x = unitRect.x - 4;
+					healthRect.y = unitRect.y - 10;
+					healthRect.w = unitRect.w + 8; //Red = remaining
+					healthRect.h = 6;
 					SDL_SetRenderDrawColor(renderer, 255, 50, 50, 1);
-				}
-				SDL_RenderDrawRect(renderer, &unitRect);
-				SDL_RenderDrawRect(renderer, &boxRect); //Draw 2 boxes to make it easier to see....
-			}
+					SDL_RenderFillRect(renderer, &healthRect);
 
-			/* 
-			SDL_Rect destRect;
-			destRect.x = units.at(uindex).getCurrentDest().getX() - x;
-			destRect.y= units.at(uindex).getCurrentDest().getY() - y;
-			destRect.w = units.at(uindex).getCurrentDest().getW();
-			destRect.h = units.at(uindex).getCurrentDest().getH();
-			SDL_SetRenderDrawColor(renderer, 255, 0, 0, 1);
-			SDL_RenderDrawRect(renderer, &destRect);
-			*/
-			
-			//for testing waypoint
-			
+					healthRect.w *= healthPct; //Green = remaining health
+					SDL_SetRenderDrawColor(renderer, 50, 255, 50, 1);
+					SDL_RenderFillRect(renderer, &healthRect);
+				}
+
+				if (units.at(uindex).isSelected())
+				{
+					SDL_Rect boxRect;
+					boxRect.x = unitRect.x - 1;
+					boxRect.y = unitRect.y - 1;
+					boxRect.w = unitRect.w + 2;
+					boxRect.h = unitRect.h + 2;
+					if (units.at(uindex).isBuilding())
+					{
+						SDL_SetRenderDrawColor(renderer, 50, 50, 255, 1);
+					}
+					else
+					{
+						SDL_SetRenderDrawColor(renderer, 255, 50, 50, 1);
+					}
+					SDL_RenderDrawRect(renderer, &unitRect);
+					SDL_RenderDrawRect(renderer, &boxRect); //Draw 2 boxes to make it easier to see....
+					int circX = units.at(uindex).getPosX() - x;
+					int circY = units.at(uindex).getPosY() - y;
+					int r = units.at(uindex).getAttackRange();
+					double dt = .01;
+					SDL_SetRenderDrawColor(renderer, 50, 255, 50, 1);
+					for (double theta = 0; theta < 2 * M_PI; theta += dt)
+					{
+						int tX = circX + r*cos(theta);
+						int tY = circY + r*sin(theta);
+						int tXD = circX + r*cos(theta + dt);
+						int tYD = circY + r*sin(theta + dt);
+						SDL_RenderDrawLine(renderer, tX, tY, tXD, tYD);
+					}
+				}
+
+				/*
+				SDL_Rect destRect;
+				destRect.x = units.at(uindex).getCurrentDest().getX() - x;
+				destRect.y= units.at(uindex).getCurrentDest().getY() - y;
+				destRect.w = units.at(uindex).getCurrentDest().getW();
+				destRect.h = units.at(uindex).getCurrentDest().getH();
+				SDL_SetRenderDrawColor(renderer, 255, 0, 0, 1);
+				SDL_RenderDrawRect(renderer, &destRect);
+				*/
+
+				//for testing waypoint
+
+			}
 		}
 	}
 }
 
 void GTDMap::addUnit(GTDUnit *u)
 {
+	u->setOnMap(true);
 	units.push_back(*u);
 }
 
@@ -280,20 +297,15 @@ void GTDMap::stepUnits(int timeElapsed)
 {
 	for (unsigned int i = 0; i < units.size(); i++)
 	{
-		units.at(i).step(timeElapsed);
 		if (units.at(i).isBuilding())
 		{
 			if (!units.at(i).hasTarget())
 			{
 				for (unsigned int j = 0; j < units.size(); j++)
 				{
-					if (units.at(j).isBuilding()) //Do nothing
+					if (units.at(j).isWaveUnit())
 					{
-
-					}
-					else
-					{
-						if (units.at(i).isWithinDistanceOfUnit(units.at(i).getAttackRange(), &units.at(j)) && !units.at(j).isDead() && !units.at(j).getInvuln())
+						if (units.at(i).isWithinDistanceOfUnit(units.at(i).getAttackRange(), &units.at(j)) && !units.at(j).getInvuln())
 						{
 							units.at(i).setTarget(&units.at(j));
 						}
@@ -301,22 +313,21 @@ void GTDMap::stepUnits(int timeElapsed)
 				}
 			}
 		}
-		else if (units.at(i).isWaveUnit())
+		if (units.at(i).isOnMap())
 		{
-			if (units.at(i).isDead())
+			units.at(i).step(timeElapsed);
+		}
+		if (units.at(i).isDead())
+		{
+			units.at(i).setOnMap(false);
+		}
+		else if(units.at(i).didReachEnd() && units.at(i).isOnMap())
+		{
+			lives--;
+			units.at(i).setOnMap(false);
+			if (lives <= 0)
 			{
-				units.erase(units.begin() + i);
-				i--;
-			}
-			else if(units.at(i).didReachEnd())
-			{
-				lives--;
-				units.erase(units.begin() + i);
-				i--;
-				if (lives <= 0)
-				{
-					//gg
-				}
+				//gg
 			}
 		}
 	}
@@ -328,20 +339,10 @@ void GTDMap::selectUnitsInRect(GTDRect *rect)
 	{
 		if (rectContainsUnit(*rect, units.at(i)))
 		{
-			/*std::cout << "Selecting " << i << std::endl;*/
 			units.at(i).select();
-			//if (units.at(i).isSelected())
-			//{
-			//	std::cout << "Unit " << i << " is selected. " << std::endl;
-			//}
-			//else
-			//{
-			//	std::cout << "Unit " << i << " is NOT selected. SEOMETHING IS WRONG" << std::endl;
-			//}
 		}
 		else
 		{
-			//std::cout << "Unselecting " << i << std::endl;
 			units.at(i).unselect();
 		}
 	}
@@ -387,10 +388,8 @@ bool GTDMap::spaceIsBuildable(int m, int n)
 	buildingRect.setY(m * getTileW());
 	buildingRect.setW(getTileW());
 	buildingRect.setH(getTileH());
-	//std::cout << buildingRect.getX() << " " << buildingRect.getY() << " " << buildingRect.getW() << " " << buildingRect.getH() << std::endl;
 	for (unsigned int i = 0; i < units.size(); i++)
 	{
-		//std::cout << units.at(i).getPosX() << " " << units.at(i).getPosY() << " " << units.at(i).getCollision() << std::endl;
 		if (rectContainsUnit(buildingRect, units.at(i)))
 		{
 			return false;//building in the way

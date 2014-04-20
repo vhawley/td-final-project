@@ -34,13 +34,16 @@ public:
 	void issueMoveToRect(GTDRect *rect);
 	bool isWithinDistanceOfUnit(double d, GTDUnit *u);
 
+	bool isOnMap();
 	bool isBuilding();
 	bool isWaveUnit();
 	GTDRect getCurrentDest();
+	GTDUnit *getTarget();
 	void setTarget(GTDUnit *u);
 	bool hasTarget();
 	bool isDead();
 
+	void setOnMap(bool on);
 	void select();
 	void unselect();
 	bool isSelected();
@@ -86,6 +89,7 @@ private:
 	GTDRect *currentDest;
 	GTDUnit *target;
 	bool reachedEnd;
+	bool onMap;
 
 	bool selected;
 	int maxhealth;
