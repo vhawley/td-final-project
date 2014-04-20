@@ -63,10 +63,9 @@ void GTDGame::run()
 
 	screenX = (map.getMapW() * map.getTileW() - S_WIDTH) / 2; //initial screen position
 	screenY = (map.getMapH() * map.getTileH() - S_HEIGHT) / 2 - 500;
+	currentState = PREGAME;
 
-	GTDRect *testRect = new GTDRect(1700, 50, 400, 200);
-	map.spawnLevel(new GTDLevel("./assets/dat/level1.dat", testRect, NULL));
-
+	timeTilSpawn = 30;
 
 	GTDTimer tickTimer;
 	tickTimer.start();
@@ -80,6 +79,9 @@ void GTDGame::run()
 		//Get time elapsed 
 		timeElapsed = tickTimer.getTicks();
 		tickTimer.start();
+
+		//update game state
+		updateGameState(timeElapsed);
 
 		//clear renderer
 		SDL_RenderClear(renderer);
@@ -320,19 +322,29 @@ void GTDGame::drawUI()
 	char killCount[5];
 	char lives[8] = "Lives: ";
 	char livesCount[5];
+	char level[8] = "Level: ";
+	char levelCount[5];
+	char timer[19] = "Time Until Spawn: ";
+	char timerCount[6];
 	char money[8] = "Money: ";
 	char moneyCount[10];
 	sprintf_s(killCount, "%d", player.getKills());
 	sprintf_s(livesCount, "%d", map.getLives());
+	sprintf_s(levelCount, "%d", currentLevel);
+	sprintf_s(timerCount, "%.1lf", timeTilSpawn);
 	sprintf_s(moneyCount, "%d", player.getMoney());
 	SDL_Surface *killsTextSurface = TTF_RenderText_Solid(font, kills, textColor);
 	SDL_Surface *killsCountSurface = TTF_RenderText_Solid(font, killCount, textColor);
 	SDL_Surface *livesTextSurface = TTF_RenderText_Solid(font, lives, textColor);
 	SDL_Surface *livesCountSurface = TTF_RenderText_Solid(font, livesCount, textColor);
+	SDL_Surface *levelTextSurface = TTF_RenderText_Solid(font, level, textColor);
+	SDL_Surface *levelCountSurface = TTF_RenderText_Solid(font, levelCount, textColor);
+	SDL_Surface *timerTextSurface = TTF_RenderText_Solid(font, timer, textColor);
+	SDL_Surface *timerCountSurface = TTF_RenderText_Solid(font, timerCount, textColor);
 	SDL_Surface *moneyTextSurface = TTF_RenderText_Solid(font, money, textColor);
 	SDL_Surface *moneyCountSurface = TTF_RenderText_Solid(font, moneyCount, textColor);
 
-	if (!killsTextSurface || !killsCountSurface || !livesTextSurface || !livesCountSurface || !moneyTextSurface || !moneyCountSurface)
+	if (!killsTextSurface || !killsCountSurface || !livesTextSurface || !livesCountSurface || !levelTextSurface || !levelCountSurface || !timerTextSurface || !timerCountSurface || !moneyTextSurface || !moneyCountSurface)
 	{
 		std::cout << "Can't create surface: " << TTF_GetError() << std::endl;
 	}
@@ -342,6 +354,10 @@ void GTDGame::drawUI()
 		SDL_Texture *killCountTexture = SDL_CreateTextureFromSurface(renderer, killsCountSurface);
 		SDL_Texture *livesTextTexture = SDL_CreateTextureFromSurface(renderer, livesTextSurface);
 		SDL_Texture *livesCountTexture = SDL_CreateTextureFromSurface(renderer, livesCountSurface);
+		SDL_Texture *levelTextTexture = SDL_CreateTextureFromSurface(renderer, levelTextSurface);
+		SDL_Texture *levelCountTexture = SDL_CreateTextureFromSurface(renderer, levelCountSurface);
+		SDL_Texture *timerTextTexture = SDL_CreateTextureFromSurface(renderer, timerTextSurface);
+		SDL_Texture *timerCountTexture = SDL_CreateTextureFromSurface(renderer, timerCountSurface);
 		SDL_Texture *moneyTextTexture = SDL_CreateTextureFromSurface(renderer, moneyTextSurface);
 		SDL_Texture *moneyCountTexture = SDL_CreateTextureFromSurface(renderer, moneyCountSurface);
 
@@ -349,6 +365,10 @@ void GTDGame::drawUI()
 		SDL_FreeSurface(killsCountSurface);
 		SDL_FreeSurface(livesTextSurface);
 		SDL_FreeSurface(livesCountSurface);
+		SDL_FreeSurface(levelTextSurface);
+		SDL_FreeSurface(levelCountSurface);
+		SDL_FreeSurface(timerTextSurface);
+		SDL_FreeSurface(timerCountSurface);
 		SDL_FreeSurface(moneyTextSurface);
 		SDL_FreeSurface(moneyCountSurface);
 
@@ -363,15 +383,35 @@ void GTDGame::drawUI()
 		killCountRect.w = strlen(killCount) * 8;
 		killCountRect.h = UIheight;
 		SDL_Rect livesTextRect;
-		livesTextRect.x = killCountRect.x + killCountRect.w + 8;
+		livesTextRect.x = killCountRect.x + killCountRect.w + 24;
 		livesTextRect.y = S_HEIGHT - UIheight;
-		livesTextRect.w = strlen(lives) * 10;
+		livesTextRect.w = strlen(lives) * 9;
 		livesTextRect.h = UIheight;
 		SDL_Rect livesCountRect;
 		livesCountRect.x = livesTextRect.x + livesTextRect.w + 2;
 		livesCountRect.y = S_HEIGHT - UIheight;
-		livesCountRect.w = strlen(livesCount) * 10;
+		livesCountRect.w = strlen(livesCount) * 9;
 		livesCountRect.h = UIheight;
+		SDL_Rect levelTextRect;
+		levelTextRect.x = livesCountRect.x + livesCountRect.w + 24;
+		levelTextRect.y = S_HEIGHT - UIheight;
+		levelTextRect.w = strlen(level) * 9;
+		levelTextRect.h = UIheight;
+		SDL_Rect levelCountRect;
+		levelCountRect.x = levelTextRect.x + levelTextRect.w + 2;
+		levelCountRect.y = S_HEIGHT - UIheight;
+		levelCountRect.w = strlen(levelCount) * 9;
+		levelCountRect.h = UIheight;
+		SDL_Rect timerTextRect;
+		timerTextRect.x = levelCountRect.x + levelCountRect.w + 24;
+		timerTextRect.y = S_HEIGHT - UIheight;
+		timerTextRect.w = strlen(timer) * 9;
+		timerTextRect.h = UIheight;
+		SDL_Rect timerCountRect;
+		timerCountRect.x = timerTextRect.x + timerTextRect.w + 2;
+		timerCountRect.y = S_HEIGHT - UIheight;
+		timerCountRect.w = strlen(timerCount) * 9;
+		timerCountRect.h = UIheight;
 		SDL_Rect moneyCountRect;
 		moneyCountRect.w = strlen(moneyCount) * 10;
 		moneyCountRect.x = S_WIDTH - moneyCountRect.w - 4;
@@ -387,6 +427,10 @@ void GTDGame::drawUI()
 		SDL_RenderCopy(renderer, killCountTexture, NULL, &killCountRect);
 		SDL_RenderCopy(renderer, livesTextTexture, NULL, &livesTextRect);
 		SDL_RenderCopy(renderer, livesCountTexture, NULL, &livesCountRect);
+		SDL_RenderCopy(renderer, levelTextTexture, NULL, &levelTextRect);
+		SDL_RenderCopy(renderer, levelCountTexture, NULL, &levelCountRect);
+		SDL_RenderCopy(renderer, timerTextTexture, NULL, &timerTextRect);
+		SDL_RenderCopy(renderer, timerCountTexture, NULL, &timerCountRect);
 		SDL_RenderCopy(renderer, moneyTextTexture, NULL, &moneyTextRect);
 		SDL_RenderCopy(renderer, moneyCountTexture, NULL, &moneyCountRect);
 
@@ -394,7 +438,44 @@ void GTDGame::drawUI()
 		SDL_DestroyTexture(killCountTexture);
 		SDL_DestroyTexture(livesTextTexture);
 		SDL_DestroyTexture(livesCountTexture);
+		SDL_DestroyTexture(levelTextTexture);
+		SDL_DestroyTexture(levelCountTexture);
+		SDL_DestroyTexture(timerTextTexture);
+		SDL_DestroyTexture(timerCountTexture);
 		SDL_DestroyTexture(moneyTextTexture);
 		SDL_DestroyTexture(moneyCountTexture);
+	}
+}
+
+void GTDGame::updateGameState(int timeElapsed)
+{
+	switch (currentState)
+	{
+	case PREGAME:
+		if (timeTilSpawn <= 0)
+		{
+			timeTilSpawn = 0;
+			currentLevel++;
+			GTDRect *testRect = new GTDRect(1700, 50, 400, 200);
+			map.spawnLevel(new GTDLevel("./assets/dat/level1.dat", testRect, NULL));
+			currentState = WAVEINPROGRESS;
+		}
+		else
+		{
+			timeTilSpawn -= (double)timeElapsed / 1000;
+		}
+		break;
+	case WAVEINPROGRESS:
+		//wait until wave complete
+		break;
+	case WAVECOMPLETE:
+		//set spawn timer for next round
+		break;
+	case GAMELOST:
+		break;
+	case GAMEWON:
+		break;
+	default:
+		break;
 	}
 }

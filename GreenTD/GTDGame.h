@@ -16,6 +16,7 @@
 class GTDGame
 {
 public:
+	enum GTDGameState { PREGAME, WAVEINPROGRESS, WAVECOMPLETE, GAMELOST, GAMEWON };
 	GTDGame();
 	~GTDGame();
 	bool init();
@@ -27,6 +28,7 @@ public:
 	void buildPlayerBuilding();
 	void performSelection();
 	void drawUI();
+	void updateGameState(int time);
 private:
 	bool loadTextures();
 	int IsGameOver;
@@ -44,6 +46,9 @@ private:
 	SDL_Color defColor;
 	TTF_Font *font;
 
+	GTDGameState currentState;
 	GTDMap map;
 	GTDPlayer player;
+	double timeTilSpawn;
+	int currentLevel = 0;
 };
