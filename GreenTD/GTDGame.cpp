@@ -12,6 +12,8 @@ GTDGame::GTDGame()
 	defColor.g = 0;
 	defColor.b = 0;
 	defColor.a = 1;
+	totalLevels = 5;
+	currentLevel = 0;
 }
 GTDGame::~GTDGame()
 {
@@ -82,6 +84,9 @@ void GTDGame::run()
 
 		//update game state
 		updateGameState(timeElapsed);
+
+		//update status message
+		updateStatusMessage();
 
 		//clear renderer
 		SDL_RenderClear(renderer);
@@ -341,10 +346,13 @@ void GTDGame::drawUI()
 	SDL_Surface *levelCountSurface = TTF_RenderText_Solid(font, levelCount, textColor);
 	SDL_Surface *timerTextSurface = TTF_RenderText_Solid(font, timer, textColor);
 	SDL_Surface *timerCountSurface = TTF_RenderText_Solid(font, timerCount, textColor);
+
+	SDL_Surface *statusTextSurface = TTF_RenderText_Solid(font, statusMessage.c_str(), textColor);
+	SDL_Surface *statusAuxSurface = TTF_RenderText_Solid(font, statusAux.c_str(), textColor);
 	SDL_Surface *moneyTextSurface = TTF_RenderText_Solid(font, money, textColor);
 	SDL_Surface *moneyCountSurface = TTF_RenderText_Solid(font, moneyCount, textColor);
 
-	if (!killsTextSurface || !killsCountSurface || !livesTextSurface || !livesCountSurface || !levelTextSurface || !levelCountSurface || !timerTextSurface || !timerCountSurface || !moneyTextSurface || !moneyCountSurface)
+	if (!killsTextSurface || !killsCountSurface || !livesTextSurface || !livesCountSurface || !levelTextSurface || !levelCountSurface || !timerTextSurface || !timerCountSurface || !moneyTextSurface || !moneyCountSurface || !statusTextSurface || !statusAuxSurface)
 	{
 		std::cout << "Can't create surface: " << TTF_GetError() << std::endl;
 	}
@@ -358,6 +366,9 @@ void GTDGame::drawUI()
 		SDL_Texture *levelCountTexture = SDL_CreateTextureFromSurface(renderer, levelCountSurface);
 		SDL_Texture *timerTextTexture = SDL_CreateTextureFromSurface(renderer, timerTextSurface);
 		SDL_Texture *timerCountTexture = SDL_CreateTextureFromSurface(renderer, timerCountSurface);
+
+		SDL_Texture *statusTextTexture = SDL_CreateTextureFromSurface(renderer, statusTextSurface);
+		SDL_Texture *statusAuxTexture = SDL_CreateTextureFromSurface(renderer, statusAuxSurface);
 		SDL_Texture *moneyTextTexture = SDL_CreateTextureFromSurface(renderer, moneyTextSurface);
 		SDL_Texture *moneyCountTexture = SDL_CreateTextureFromSurface(renderer, moneyCountSurface);
 
@@ -369,6 +380,9 @@ void GTDGame::drawUI()
 		SDL_FreeSurface(levelCountSurface);
 		SDL_FreeSurface(timerTextSurface);
 		SDL_FreeSurface(timerCountSurface);
+
+		SDL_FreeSurface(statusTextSurface);
+		SDL_FreeSurface(statusAuxSurface);
 		SDL_FreeSurface(moneyTextSurface);
 		SDL_FreeSurface(moneyCountSurface);
 
@@ -412,6 +426,7 @@ void GTDGame::drawUI()
 		timerCountRect.y = S_HEIGHT - UIheight;
 		timerCountRect.w = strlen(timerCount) * 9;
 		timerCountRect.h = UIheight;
+
 		SDL_Rect moneyCountRect;
 		moneyCountRect.w = strlen(moneyCount) * 10;
 		moneyCountRect.x = S_WIDTH - moneyCountRect.w - 4;
@@ -419,9 +434,19 @@ void GTDGame::drawUI()
 		moneyCountRect.h = UIheight;
 		SDL_Rect moneyTextRect;
 		moneyTextRect.w = strlen(money) * 10;
-		moneyTextRect.x = S_WIDTH - moneyCountRect.w - moneyTextRect.w - 4;
+		moneyTextRect.x = moneyCountRect.x - moneyTextRect.w - 4;
 		moneyTextRect.y = S_HEIGHT - UIheight;
 		moneyTextRect.h = UIheight;
+		SDL_Rect statusAuxRect;
+		statusAuxRect.w = strlen(statusAux.c_str()) * 8;
+		statusAuxRect.x = moneyTextRect.x - statusAuxRect.w - 24;
+		statusAuxRect.y = S_HEIGHT - UIheight;
+		statusAuxRect.h = UIheight;
+		SDL_Rect statusTextRect;
+		statusTextRect.w = strlen(statusMessage.c_str()) * 10;
+		statusTextRect.x = statusAuxRect.x - statusTextRect.w - 4;
+		statusTextRect.y = S_HEIGHT - UIheight;
+		statusTextRect.h = UIheight;
 
 		SDL_RenderCopy(renderer, killsTextTexture, NULL, &killsTextRect);
 		SDL_RenderCopy(renderer, killCountTexture, NULL, &killCountRect);
@@ -431,6 +456,8 @@ void GTDGame::drawUI()
 		SDL_RenderCopy(renderer, levelCountTexture, NULL, &levelCountRect);
 		SDL_RenderCopy(renderer, timerTextTexture, NULL, &timerTextRect);
 		SDL_RenderCopy(renderer, timerCountTexture, NULL, &timerCountRect);
+		SDL_RenderCopy(renderer, statusTextTexture, NULL, &statusTextRect);
+		SDL_RenderCopy(renderer, statusAuxTexture, NULL, &statusAuxRect);
 		SDL_RenderCopy(renderer, moneyTextTexture, NULL, &moneyTextRect);
 		SDL_RenderCopy(renderer, moneyCountTexture, NULL, &moneyCountRect);
 
@@ -442,6 +469,8 @@ void GTDGame::drawUI()
 		SDL_DestroyTexture(levelCountTexture);
 		SDL_DestroyTexture(timerTextTexture);
 		SDL_DestroyTexture(timerCountTexture);
+		SDL_DestroyTexture(statusTextTexture);
+		SDL_DestroyTexture(statusAuxTexture);
 		SDL_DestroyTexture(moneyTextTexture);
 		SDL_DestroyTexture(moneyCountTexture);
 	}
@@ -457,7 +486,9 @@ void GTDGame::updateGameState(int timeElapsed)
 			timeTilSpawn = 0;
 			currentLevel++;
 			GTDRect *testRect = new GTDRect(1700, 50, 400, 200);
-			map.spawnLevel(new GTDLevel("./assets/dat/level1.dat", testRect, NULL));
+			char levelfile[40];
+			sprintf_s(levelfile, "./assets/dat/level%d.dat", currentLevel);
+			map.spawnLevel(new GTDLevel(levelfile, testRect, NULL));
 			currentState = WAVEINPROGRESS;
 		}
 		else
@@ -466,16 +497,97 @@ void GTDGame::updateGameState(int timeElapsed)
 		}
 		break;
 	case WAVEINPROGRESS:
-		//wait until wave complete
+		numRemaining = map.getNumWaveUnitsOnMap();
+		if (numRemaining <= 0)
+		{
+			map.removeUnitsNotOnMap(); //for memory purposes
+			timeTilSpawn = 20;
+			currentState = WAVECOMPLETE;
+		}
+		else if (map.getLives() <= 0)
+		{
+			currentState = GAMELOST;
+		}
 		break;
 	case WAVECOMPLETE:
-		//set spawn timer for next round
+		if (currentLevel >= totalLevels)
+		{
+			currentState = GAMEWON;
+		}
+		else
+		{
+			if (timeTilSpawn <= 0)
+			{
+				timeTilSpawn = 0;
+				currentLevel++;
+				GTDRect *testRect = new GTDRect(1700, 50, 400, 200);
+				char levelfile[40];
+				sprintf_s(levelfile, "./assets/dat/level%d.dat", currentLevel);
+				map.spawnLevel(new GTDLevel(levelfile, testRect, NULL));
+				currentState = WAVEINPROGRESS;
+			}
+			else
+			{
+				timeTilSpawn -= (double)timeElapsed / 1000;
+			}
+		}
 		break;
 	case GAMELOST:
+		//gg
 		break;
 	case GAMEWON:
+		//gg
 		break;
 	default:
 		break;
 	}
+}
+
+void GTDGame::updateStatusMessage() //updates dynamic text based on current player situation
+{
+	switch (currentState)
+	{
+	case GAMELOST:
+		statusMessage = "Game Over!";
+		statusAux = " ";
+		break;
+	case GAMEWON:
+		statusMessage = "You won!";
+		statusAux = " ";
+		break;
+	default:
+		GTDUnit *selectedUnit = map.getSelectedUnit();
+		if (selectedUnit != NULL)
+		{
+			statusMessage = selectedUnit->getName();
+			if (selectedUnit->isWaveUnit())
+			{
+				int health = selectedUnit->getHealth();
+				int maxHealth = selectedUnit->getMaxHealth();
+				char temp[24];
+				sprintf_s(temp, "health: %d / %d", health, maxHealth);
+				statusAux = temp;
+			}
+			else if (selectedUnit->isBuilding())
+			{
+				int lowatk = selectedUnit->getAttackDMG() - selectedUnit->getAttackDMGRange();
+				int highatk = selectedUnit->getAttackDMG() + selectedUnit->getAttackDMGRange();	
+				char temp[24];
+				sprintf_s(temp, "attack: %d - %d", lowatk, highatk);
+				statusAux = temp;
+			}
+			else
+			{
+				//shouldnt get here
+				statusAux = " ";
+			}
+		}
+		else
+		{
+			statusMessage = " ";
+			statusAux = " ";
+		}
+		break;
+	}
+	
 }

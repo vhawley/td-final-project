@@ -10,21 +10,23 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Ren
 {
 	unitType = BUILDING;
 	renderer = rend;
+	setPosX(x);
+	setPosY(y);
+	cost = getCost(b);
+	collision = getCollision(b);
+	owner = own;
+	atkCooldownTimer = 0;
 	switch (b)
 	{
 		case NORMAL:
 			cout << "Creating NORMAL building..." << endl;
-			setPosX(x);
-			setPosY(y);
-			collision = 32;
 			if (!loadUnitTexture("./assets/towers/NORMAL.bmp", renderer))
 			{
 				cout << "NORMAL tower texture load failed" << endl;
 			}
 			name = "Normal Tower";
-			owner = own;
 			maxhealth = 100;
-			health = 100;
+			health = maxhealth;
 			armor = 2;
 			invuln = false;
 			movespeed = 0;
@@ -34,32 +36,43 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Ren
 			attackDMGRange = 3;
 			attackRange = 200;
 			attackCooldown = 1000;
-			atkCooldownTimer = 0;
-			cost = getCost(b);
 			break;
 		case FIRE:
 			cout << "Creating FIRE building..." << endl;
-			cost = getCost(b);
+		
+			if (!loadUnitTexture("./assets/towers/FIRE.bmp", renderer))
+			{
+				cout << "Fire tower texture load failed" << endl;
+			}
+			name = "Fire Tower";
+			
+			maxhealth = 100;
+			health = 100;
+			armor = 2;
+			invuln = false;
+			movespeed = 0;
+			bounty = 50;
+			bountyrange = 0;
+			attackDMG = 28;
+			attackDMGRange = 4;
+			attackRange = 100;
+			attackCooldown = 800;
+			atkCooldownTimer = 0;
 			break;
 		case ICE:
 			cout << "Creating ICE building..." << endl;
-			cost = getCost(b);
 			break;
 		case LIGHTNING:
 			cout << "Creating LIGHTNING building..." << endl;
-			cost = getCost(b);
 				break;
 		case EARTH:
 			cout << "Creating EARTH building..." << endl;
-			cost = getCost(b);
 				break;
 		case SPEEDASSIST:
 			cout << "Creating SPEEDASSIST building..." << endl;
-			cost = getCost(b);
 				break;
 		case DMGASSIST:
 			cout << "Creating DMGASSIST building..." << endl;
-			cost = getCost(b);
 				break;
 		default:
 				break;
@@ -149,7 +162,7 @@ GTDUnit::GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend, GTD
 		{
 			cout << "KING texture load failed" << endl;
 		}
-		name = "Knight";
+		name = "King";
 		maxhealth = 120;
 		health = 120;
 		armor = 5;
@@ -189,6 +202,11 @@ SDL_Texture * GTDUnit::getTexture()
 GTDPlayer * GTDUnit::getOwner()
 {
 	return owner;
+}
+
+string GTDUnit::getName()
+{
+	return name;
 }
 
 GTDUnit * GTDUnit::getTarget()
@@ -418,7 +436,7 @@ int GTDUnit::getAttackDMG()
 }
 int GTDUnit::getAttackDMGRange()
 {
-	return attackDMG;
+	return attackDMGRange;
 }
 int GTDUnit::getAttackRange()
 { 

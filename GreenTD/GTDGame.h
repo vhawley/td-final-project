@@ -29,6 +29,7 @@ public:
 	void performSelection();
 	void drawUI();
 	void updateGameState(int time);
+	void updateStatusMessage();
 private:
 	bool loadTextures();
 	int IsGameOver;
@@ -46,9 +47,14 @@ private:
 	SDL_Color defColor;
 	TTF_Font *font;
 
+	string statusMessage;
+	string statusAux;
+
 	GTDGameState currentState;
 	GTDMap map;
 	GTDPlayer player;
 	double timeTilSpawn;
-	int currentLevel = 0;
+	int currentLevel;
+	int totalLevels;
+	int numRemaining;
 };

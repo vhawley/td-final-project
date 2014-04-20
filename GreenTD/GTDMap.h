@@ -30,7 +30,11 @@ public:
 	void addUnit(GTDUnit *u);
 	void stepUnits(int timeElapsed);
 
+	void removeUnitsNotOnMap();
+	int getNumWaveUnitsOnMap();
 	void selectUnitsInRect(GTDRect *rect);
+
+	GTDUnit * getSelectedUnit();
 
 	int getMapW();
 	int getMapH();

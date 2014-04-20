@@ -24,5 +24,5 @@ class GTDProjectile
 		int speed;		//speed that the projectile will move at
 		int xdir;		//x direction of motion (1, 0 or -1)
 		int ydir;		//y direction of motion (1, 0 or -1)
-		GTDMap *map; //map reference
+		GTDMap *map;
 };

@@ -27,6 +27,7 @@ public:
 
 	SDL_Texture * getTexture();
 	GTDPlayer * getOwner();
+	string getName();
 
 	void step(int timeElapsed);
 

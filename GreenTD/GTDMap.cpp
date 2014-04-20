@@ -333,6 +333,34 @@ void GTDMap::stepUnits(int timeElapsed)
 	}
 }
 
+void GTDMap::removeUnitsNotOnMap() //only to use at end of level to save memory
+{
+	for (unsigned int i = 0; i < units.size(); i++)
+	{
+		if (units.at(i).isBuilding()) //set building targets to null to prevent them attacking nonexistant units
+		{
+			units.at(i).setTarget(NULL);
+		}
+		if (!units.at(i).isOnMap())
+		{
+			units.erase(units.begin() + i);
+		}
+	}
+}
+
+int GTDMap::getNumWaveUnitsOnMap()
+{
+	int count = 0;
+	for (unsigned int i = 0; i < units.size(); i++)
+	{
+		if (units.at(i).isOnMap() && units.at(i).isWaveUnit())
+		{
+			count++;
+		}
+	}
+	return count;
+}
+
 void GTDMap::selectUnitsInRect(GTDRect *rect)
 {
 	for (unsigned int i = 0; i < units.size(); i++)
@@ -345,6 +373,28 @@ void GTDMap::selectUnitsInRect(GTDRect *rect)
 		{
 			units.at(i).unselect();
 		}
+	}
+}
+
+GTDUnit * GTDMap::getSelectedUnit()
+{
+	int count = 0;
+	int selectedIndex = 0;
+	for (unsigned int i = 0; i < units.size(); i++)
+	{
+		if (units.at(i).isSelected())
+		{
+			selectedIndex = i;
+			count++;
+		}
+	}
+	if (count == 1) //only return a unit if there is 1 selected unit. otherwise return null since it is not needed
+	{
+		return &units.at(selectedIndex);
+	}
+	else
+	{
+		return NULL;
 	}
 }
 
