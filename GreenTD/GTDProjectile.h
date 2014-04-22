@@ -1,28 +1,42 @@
 #pragma once
 
 #include <iostream>
+#include <string>
 #include <SDL.h>
-#include "GTDMap.h"
-
-
+#include "GTDPlayer.h"
+#include "GTDUnit.h"
 using namespace std;
 
 class GTDProjectile
 {
 	public:
-		GTDProjectile(int x, int y, int xd, int yd);
-		void spawn();	//creates new instance of projectile
-		void move(int x, int y);	//moves projectile
-		void die();	//ends the instance of the projectile
-		bool getHitTarget();	//returns true if the projectile hit the target	
-		int getXcoord(); //get x coord
-		int getYcoord(); //get y coord
+		enum GTDProjectileType{ NORMAL, FIRE, ICE, LIGHTNING, EARTH };
+		GTDProjectile(GTDProjectileType p, GTDPlayer *o, int x, int y, int d, GTDUnit *t, SDL_Renderer *renderer);
+		GTDPlayer *getOwner();
+		GTDUnit *getTarget();
+		SDL_Texture *getTexture();
+
+		double getPosX();
+		double getPosY();
+		double getFacingAngle();
+
+		void step(int timeElapsed);
+		void die();
+		void setOnMap(bool t);
+		bool getIsOnMap();
+		bool hasReachedTarget();
+		bool loadProjTexture(string fn, SDL_Renderer *renderer);
+
+		static int getMoveSpeed(GTDProjectileType p);
 	private:
-		bool hitTarget;		//true if the projectile hit the target
-		int xcoord;		//x coordinate of location
-		int ycoord;		//y coordinate of location
-		int speed;		//speed that the projectile will move at
-		int xdir;		//x direction of motion (1, 0 or -1)
-		int ydir;		//y direction of motion (1, 0 or -1)
-		GTDMap *map;
+		GTDProjectileType projType;
+		GTDPlayer *owner;
+		GTDUnit *target;
+		SDL_Texture *texture;
+		bool isOnMap;
+		double posX;
+		double posY;
+		double facingAngle;
+		int movespeed;
+		int damage;
 };

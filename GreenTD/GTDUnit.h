@@ -5,6 +5,7 @@
 #include <math.h>
 #include <string.h>
 #include <SDL.h>
+#include <SDL_image.h>
 #include "GTDPlayer.h"
 #include "GTDRect.h"
 #include "GTDWaypoint.h"
@@ -28,6 +29,8 @@ public:
 	SDL_Texture * getTexture();
 	GTDPlayer * getOwner();
 	string getName();
+	GTDBuilding getBuildingType();
+	GTDWaveUnit getWaveUnitType();
 
 	void step(int timeElapsed);
 
@@ -40,7 +43,9 @@ public:
 	bool isWaveUnit();
 	GTDRect getCurrentDest();
 	GTDUnit *getTarget();
+	bool hasQueuedProjectile();
 	void setTarget(GTDUnit *u);
+	void setQueuedProjectile(bool t);
 	bool hasTarget();
 	bool isDead();
 
@@ -49,6 +54,7 @@ public:
 	void unselect();
 	bool isSelected();
 	bool didReachEnd();
+	double getFacingAngle();
 
 	int getMaxHealth();
 	int getHealth();
@@ -63,9 +69,22 @@ public:
 
 	void setHealth(int h);
 
+	static string getName(enum GTDBuilding b);
 	static int getCollision(enum GTDBuilding b);
 	static int getCost(enum GTDBuilding b);
+	static int getAttackDMG(enum GTDBuilding b);
+	static int getAttackDMGRange(enum GTDBuilding b);
+	static int getAttackRange(enum GTDBuilding b);
+	static int getAttackCooldown(enum GTDBuilding b);
 
+	static string getName(enum GTDWaveUnit w);
+	static int getMaxHealth(enum GTDWaveUnit w);
+	static int getBaseArmor(enum GTDWaveUnit w);
+	static int getMoveSpeed(enum GTDWaveUnit w);
+	static int getBounty(enum GTDWaveUnit w);
+	static int getBountyRange(enum GTDWaveUnit w);
+
+	~GTDUnit();
 private:
 	void setPosX(double x);
 	void setPosY(double y);
@@ -85,13 +104,17 @@ private:
 	SDL_Renderer *renderer;
 	string name;
 	GTDPlayer *owner; //Units must have an owner
+	bool queuedProjectile;
 	enum GTDUnitType unitType;
+	enum GTDBuilding bType;
+	enum GTDWaveUnit wType;
 	GTDWaypoint waypoint;
 	GTDRect *currentDest;
 	GTDUnit *target;
 	bool reachedEnd;
 	bool onMap;
 
+	double facingAngle;
 	bool selected;
 	int maxhealth;
 	int health;

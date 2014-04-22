@@ -9,13 +9,28 @@ GTDUnit::GTDUnit()
 GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Renderer *rend)
 {
 	unitType = BUILDING;
+	bType = b;
 	renderer = rend;
 	setPosX(x);
 	setPosY(y);
 	cost = getCost(b);
+	name = getName(b);
 	collision = getCollision(b);
+	attackDMG = getAttackDMG(b);
+	attackDMGRange = getAttackDMGRange(b);
+	attackRange = getAttackRange(b);
+	attackCooldown = getAttackCooldown(b);
 	owner = own;
 	atkCooldownTimer = 0;
+	armor = 0;
+	invuln = false;
+	bounty = 0;
+	bountyrange = 0;
+	movespeed = 0;
+	maxhealth = 100;
+	health = maxhealth;
+	facingAngle = 0;
+	queuedProjectile = false;
 	switch (b)
 	{
 		case NORMAL:
@@ -24,55 +39,48 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Ren
 			{
 				cout << "NORMAL tower texture load failed" << endl;
 			}
-			name = "Normal Tower";
-			maxhealth = 100;
-			health = maxhealth;
-			armor = 2;
-			invuln = false;
-			movespeed = 0;
-			bounty = 50;
-			bountyrange = 0;
-			attackDMG = 18;
-			attackDMGRange = 3;
-			attackRange = 200;
-			attackCooldown = 1000;
 			break;
 		case FIRE:
 			cout << "Creating FIRE building..." << endl;
-		
 			if (!loadUnitTexture("./assets/towers/FIRE.bmp", renderer))
 			{
-				cout << "Fire tower texture load failed" << endl;
+				cout << "FIRE tower texture load failed" << endl;
 			}
-			name = "Fire Tower";
-			
-			maxhealth = 100;
-			health = 100;
-			armor = 2;
-			invuln = false;
-			movespeed = 0;
-			bounty = 50;
-			bountyrange = 0;
-			attackDMG = 28;
-			attackDMGRange = 4;
-			attackRange = 100;
-			attackCooldown = 800;
-			atkCooldownTimer = 0;
 			break;
 		case ICE:
 			cout << "Creating ICE building..." << endl;
+			if (!loadUnitTexture("./assets/towers/ICE.bmp", renderer))
+			{
+				cout << "ICE tower texture load failed" << endl;
+			}
 			break;
 		case LIGHTNING:
 			cout << "Creating LIGHTNING building..." << endl;
+			if (!loadUnitTexture("./assets/towers/LIGHTNING.bmp", renderer))
+			{
+				cout << "LIGHTNING tower texture load failed" << endl;
+			}
 				break;
 		case EARTH:
 			cout << "Creating EARTH building..." << endl;
+			if (!loadUnitTexture("./assets/towers/EARTH.bmp", renderer))
+			{
+				cout << "EARTH tower texture load failed" << endl;
+			}
 				break;
 		case SPEEDASSIST:
 			cout << "Creating SPEEDASSIST building..." << endl;
+			if (!loadUnitTexture("./assets/towers/SPEEDASSIST.bmp", renderer))
+			{
+				cout << "SPEEDASSIST tower texture load failed" << endl;
+			}
 				break;
 		case DMGASSIST:
 			cout << "Creating DMGASSIST building..." << endl;
+			if (!loadUnitTexture("./assets/towers/DMGASSIST.bmp", renderer))
+			{
+				cout << "DMGASSIST tower texture load failed" << endl;
+			}
 				break;
 		default:
 				break;
@@ -85,14 +93,27 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Ren
 GTDUnit::GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend, GTDWaypoint way)
 {
 	unitType = WAVEUNIT;
+	wType = w;
 	renderer = rend;
 	waypoint = way;
 	reachedEnd = false;
 	setPosX(x);
 	setPosY(y);
+	name = getName(w);
 	owner = NULL;
 	cost = 0;
 	attackRange = 0;
+	maxhealth = getMaxHealth(w);
+	health = maxhealth;
+	armor = getBaseArmor(w);
+	invuln = false;
+	movespeed = getMoveSpeed(w);
+	bounty = getBounty(w);
+	bountyrange = getBountyRange(w);
+	attackDMG = 0;
+	attackDMGRange = 0;
+	facingAngle = 0;
+	queuedProjectile = false;
 	if (waypoint.first)
 	{
 		issueMoveToRect(waypoint.first->rect);
@@ -102,76 +123,35 @@ GTDUnit::GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend, GTD
 	case VILLAGER:
 		cout << "Creating VILLAGER unit..." << endl;
 		
-		collision = 28;
-		if (!loadUnitTexture("./assets/creeps/VILLAGER.bmp", renderer))
+		collision = 26;
+		if (!loadUnitTexture("./assets/creeps/VILLAGER.png", renderer))
 		{
 			cout << "VILLAGER texture load failed" << endl;
 		}
-		name = "Villager";
-		
-		maxhealth = 50;
-		health = 50;
-		armor = 0;
-		invuln = false;
-		movespeed = 100;
-		bounty = 10;
-		bountyrange = 2;
-		attackDMG = 18;
-		attackDMGRange = 3;
 		break;
 	case SWORDSMAN:
 		cout << "Creating SWORDSMAN unit..." << endl;
 		collision = 28;
-		if (!loadUnitTexture("./assets/creeps/SWORDSMAN.bmp", renderer))
+		if (!loadUnitTexture("./assets/creeps/SWORDSMAN.png", renderer))
 		{
 			cout << "SWORDSMAN texture load failed" << endl;
 		}
-		name = "Swordsman";
-		maxhealth = 75;
-		health = 75;
-		armor = 2;
-		invuln = false;
-		movespeed = 100;
-		bounty = 10;
-		bountyrange = 2;
-		attackDMG = 18;
-		attackDMGRange = 3;
 		break;
 	case KNIGHT:
 		cout << "Creating KNIGHT unit..." << endl;
-		collision = 28;
-		if (!loadUnitTexture("./assets/creeps/KNIGHT.bmp", renderer))
+		collision = 32;
+		if (!loadUnitTexture("./assets/creeps/KNIGHT.png", renderer))
 		{
 			cout << "KNIGHT texture load failed" << endl;
 		}
-		name = "Knight";
-		maxhealth = 95;
-		health = 95;
-		armor = 3;
-		invuln = false;
-		movespeed = 100;
-		bounty = 10;
-		bountyrange = 2;
-		attackDMG = 18;
-		attackDMGRange = 3;
 		break;
 	case KING:
 		cout << "Creating KING unit..." << endl;
-		collision = 28;
-		if (!loadUnitTexture("./assets/creeps/KING.bmp", renderer))
+		collision = 40;
+		if (!loadUnitTexture("./assets/creeps/KING.png", renderer))
 		{
 			cout << "KING texture load failed" << endl;
 		}
-		name = "King";
-		maxhealth = 120;
-		health = 120;
-		armor = 5;
-		invuln = false;
-		movespeed = 100;
-		bounty = 10;
-		bountyrange = 2;
-		attackDMG = 18;
-		attackDMGRange = 3;
 		break;
 	default:
 		break;
@@ -209,11 +189,29 @@ string GTDUnit::getName()
 	return name;
 }
 
+GTDUnit::GTDBuilding GTDUnit::getBuildingType()
+{
+	return bType;
+}
+GTDUnit::GTDWaveUnit GTDUnit::getWaveUnitType()
+{
+	return wType;
+}
+
 GTDUnit * GTDUnit::getTarget()
 {
 	return target;
 }
 
+bool GTDUnit::hasQueuedProjectile()
+{
+	return queuedProjectile;
+}
+
+void GTDUnit::setQueuedProjectile(bool t)
+{
+	queuedProjectile = false;
+}
 
 void GTDUnit::setTarget(GTDUnit *u)
 {
@@ -256,25 +254,36 @@ void GTDUnit::step(int timeElapsed) //time elapsed in milliseconds
 	{
 	case BUILDING:
 		//what to do as a building every game tick. check for attack.  attack if possible
-		if (atkCooldownTimer <= 0 && hasTarget())
+		switch (bType)
 		{
-			if (target->isDead() || target->didReachEnd() || target->getInvuln())
+		case SPEEDASSIST:
+			//map provides speed buff to nearby towers
+			break;
+		case DMGASSIST:
+			//map provides dmg buff to nearby towers
+			break;
+		default:
+			if (atkCooldownTimer <= 0 && hasTarget())
 			{
-				setTarget(NULL);
+				if (target->isDead() || target->didReachEnd() || target->getInvuln())
+				{
+					setTarget(NULL);
+				}
+				else if (isWithinDistanceOfUnit(attackRange, target))
+				{
+					attackTarget();
+					atkCooldownTimer = attackCooldown;
+				}
 			}
-			else if (isWithinDistanceOfUnit(attackRange, target))
+			else if (!hasTarget() && atkCooldownTimer <= 0)
 			{
-				attackTarget();
-				atkCooldownTimer = attackCooldown;
+
 			}
-		}
-		else if (!hasTarget() && atkCooldownTimer <= 0)
-		{
-			
-		}
-		else if (atkCooldownTimer > 0)
-		{
-			atkCooldownTimer -= timeElapsed;
+			else if (atkCooldownTimer > 0)
+			{
+				atkCooldownTimer -= timeElapsed;
+			}
+			break;
 		}
 		break;
 	case WAVEUNIT:
@@ -304,17 +313,16 @@ void GTDUnit::step(int timeElapsed) //time elapsed in milliseconds
 				double dx = xC - posX;
 				double dy = yC - posY;
 
-				double walkangle = atan(dy / dx);
-
+				facingAngle = atan(dy / dx);
 				if (dx < 0) //only dx < 0 because cos is always positive. sin can return - values!!
 				{
-					posX -= cos(walkangle) * ((double)timeElapsed / 1000) * movespeed;
-					posY -= sin(walkangle) * ((double)timeElapsed / 1000) * movespeed;
+					posX -= cos(facingAngle) * ((double)timeElapsed / 1000) * movespeed;
+					posY -= sin(facingAngle) * ((double)timeElapsed / 1000) * movespeed;
 				}
 				else
 				{
-					posX += cos(walkangle) * ((double)timeElapsed / 1000) * movespeed;
-					posY += sin(walkangle) * ((double)timeElapsed / 1000) * movespeed;
+					posX += cos(facingAngle) * ((double)timeElapsed / 1000) * movespeed;
+					posY += sin(facingAngle) * ((double)timeElapsed / 1000) * movespeed;
 				}
 			}
 		}
@@ -327,8 +335,8 @@ void GTDUnit::step(int timeElapsed) //time elapsed in milliseconds
 
 void GTDUnit::issueMoveToPoint(int x, int y)
 {
-
-
+	GTDRect *tempDest = new GTDRect(x - 2, y - 2, 4, 4);
+	currentDest = tempDest;
 }
 void GTDUnit::issueMoveToRect(GTDRect *rect)
 {
@@ -401,6 +409,11 @@ bool GTDUnit::didReachEnd()
 	return reachedEnd;
 }
 
+double GTDUnit::getFacingAngle()
+{
+	return facingAngle;
+}
+
 int GTDUnit::getMaxHealth()
 {
 	return maxhealth;
@@ -458,26 +471,31 @@ void GTDUnit::setHealth(int h)
 
 void GTDUnit::attackTarget()
 {
-	int damageDealt = (attackDMG + (rand() % attackDMGRange) - (attackDMGRange / 2)) * (((double)100 - target->getArmor()) / 100);
-	target->setHealth(target->getHealth() - std::max(damageDealt, 0));
-	int test = 0;
-	if (target->isDead())
-	{
-		int moneyEarned;
-		if (target->getBountyrange() == 0)
-		{
-			moneyEarned = target->getBounty();
-		}
-		else
-		{
-			moneyEarned = target->getBounty() + ((rand() % target->getBountyrange()) - (target->getBountyrange() / 2));
-		} 
-		owner->earn(moneyEarned);
-		owner->addKill();
-		std::cout << "Player earned " << moneyEarned << " money.  He now has " << owner->getMoney() << " money." << std::endl;
-	}
+	queuedProjectile = true;
 }
 
+string GTDUnit::getName(enum GTDBuilding b)
+{
+	switch (b)
+	{
+		case NORMAL:
+			return "Normal Tower";
+		case FIRE:
+			return "Fire Tower";
+		case ICE:
+			return "Ice Tower";
+		case LIGHTNING:
+			return "Lightning Tower";
+		case EARTH:
+			return "Earth Tower";
+		case SPEEDASSIST:
+			return "Speed Assist Tower";
+		case DMGASSIST:
+			return "Damage Assist Tower";
+		default:
+			return " ";
+	}
+}
 
 int GTDUnit::getCollision(enum GTDBuilding b)
 {
@@ -515,7 +533,7 @@ int GTDUnit::getCost(enum GTDBuilding b)
 		case LIGHTNING:
 			return 250;
 		case EARTH:
-			return 225;
+			return 250;
 		case SPEEDASSIST:
 			return 300;
 		case DMGASSIST:
@@ -525,6 +543,193 @@ int GTDUnit::getCost(enum GTDBuilding b)
 	}
 }
 
+
+int GTDUnit::getAttackDMG(enum GTDBuilding b)
+{
+	switch (b)
+	{
+		case NORMAL:
+			return 18;
+		case FIRE:
+			return 30;
+		case ICE:
+			return 22;
+		case LIGHTNING:
+			return 35;
+		case EARTH:
+			return 50;
+		case SPEEDASSIST:
+			return 0;
+		case DMGASSIST:
+			return 0;
+		default:
+			return 0;
+	}
+}
+int GTDUnit::getAttackDMGRange(enum GTDBuilding b)
+{
+	switch (b)
+	{
+		case NORMAL:
+			return 3;
+		case FIRE:
+			return 10;
+		case ICE:
+			return 2;
+		case LIGHTNING:
+			return 15;
+		case EARTH:
+			return 0;
+		case SPEEDASSIST:
+			return 0;
+		case DMGASSIST:
+			return 0;
+		default:
+			return 0;
+	}
+}
+int GTDUnit::getAttackRange(enum GTDBuilding b)
+{
+	switch (b)
+	{
+		case NORMAL:
+			return 200;
+		case FIRE:
+			return 300;
+		case ICE:
+			return 300;
+		case LIGHTNING:
+			return 150;
+		case EARTH:
+			return 300;
+		case SPEEDASSIST:
+			return 250;
+		case DMGASSIST:
+			return 250;
+		default:
+			return 0;
+	}
+}
+int GTDUnit::getAttackCooldown(enum GTDBuilding b)
+{
+	switch (b)
+	{
+		case NORMAL:
+			return 1000;
+		case FIRE:
+			return 1250;
+		case ICE:
+			return 1100;
+		case LIGHTNING:
+			return 500;
+		case EARTH:
+			return 2000;
+		case SPEEDASSIST:
+			return 0;
+		case DMGASSIST:
+			return 0;
+		default:
+			return 0;
+	}
+}
+
+string GTDUnit::getName(enum GTDWaveUnit w)
+{
+	switch (w)
+	{
+		case VILLAGER:
+			return "Villager";
+		case SWORDSMAN:
+			return "Swordsman";
+		case KNIGHT:
+			return "Knight";
+		case KING:
+			return "King";
+		default:
+			return " ";
+	}
+}
+
+int GTDUnit::getMaxHealth(enum GTDWaveUnit w)
+{
+	switch (w)
+	{
+		case VILLAGER:
+			return 50;
+		case SWORDSMAN:
+			return 200;
+		case KNIGHT:
+			return 400;
+		case KING:
+			return 1000;
+		default:
+			return 50;
+	}
+}
+int GTDUnit::getBaseArmor(enum GTDWaveUnit w)
+{
+	switch (w)
+	{
+		case VILLAGER:
+			return 2;
+		case SWORDSMAN:
+			return 6;
+		case KNIGHT:
+			return 12;
+		case KING:
+			return 8;
+		default:
+			return 0;
+	}
+}
+int GTDUnit::getMoveSpeed(enum GTDWaveUnit w)
+{
+	switch (w)
+	{
+		case VILLAGER:
+			return 75;
+		case SWORDSMAN:
+			return 90;
+		case KNIGHT:
+			return 100;
+		case KING:
+			return 50;
+		default:
+			return 50;
+	}
+}
+int GTDUnit::getBounty(enum GTDWaveUnit w)
+{
+	switch (w)
+	{
+		case VILLAGER:
+			return 15;
+		case SWORDSMAN:
+			return 50;
+		case KNIGHT:
+			return 100;
+		case KING:
+			return 200;
+		default:
+			return 50;
+	}
+}
+int GTDUnit::getBountyRange(enum GTDWaveUnit w)
+{
+	switch (w)
+	{
+		case VILLAGER:
+			return 3;
+		case SWORDSMAN:
+			return 5;
+		case KNIGHT:
+			return 10;
+		case KING:
+			return 0;
+		default:
+			return 50;
+	}
+}
 
 void GTDUnit::setPosX(double x)
 {
@@ -558,10 +763,10 @@ bool GTDUnit::atDestination()
 bool GTDUnit::loadUnitTexture(string fn, SDL_Renderer *renderer)
 {
 	//Load BMP from filepath
-	SDL_Surface *BMP = SDL_LoadBMP(fn.c_str());
-	text = SDL_CreateTextureFromSurface(renderer, BMP);
+	SDL_Surface *image = IMG_Load(fn.c_str());
+	text = SDL_CreateTextureFromSurface(renderer, image);
 
-	SDL_FreeSurface(BMP);
+	SDL_FreeSurface(image);
 
 	if (!text)
 	{
@@ -570,3 +775,9 @@ bool GTDUnit::loadUnitTexture(string fn, SDL_Renderer *renderer)
 	
 	return true;
 }
+
+GTDUnit::~GTDUnit()
+{
+
+}
+

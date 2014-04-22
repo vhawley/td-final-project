@@ -47,14 +47,15 @@ bool GTDGame::init()
 		std::cout << "TTF_Init error: " << TTF_GetError() << std::endl;
 		return false;
 	}
-	else
+	font = TTF_OpenFont("HARNGTON.TTF", 19);
+	if (!font)
 	{
-		font = TTF_OpenFont("HARNGTON.TTF", 19);
-		if (!font)
-		{
-			std::cout << "TTF_OpenFont error: " << TTF_GetError() << std::endl;
-			return false;
-		}
+		std::cout << "TTF_OpenFont error: " << TTF_GetError() << std::endl;
+		return false;
+	}
+	if (!IMG_Init(IMG_INIT_PNG))
+	{
+		printf( "IMG_Init Error: %s\n", IMG_GetError() );
 	}
 	return true;
 }
@@ -329,6 +330,7 @@ void GTDGame::drawUI()
 	char livesCount[5];
 	char level[8] = "Level: ";
 	char levelCount[5];
+	char shop[75];
 	char timer[19] = "Time Until Spawn: ";
 	char timerCount[6];
 	char money[8] = "Money: ";
@@ -336,6 +338,8 @@ void GTDGame::drawUI()
 	sprintf_s(killCount, "%d", player.getKills());
 	sprintf_s(livesCount, "%d", map.getLives());
 	sprintf_s(levelCount, "%d", currentLevel);
+	GTDUnit::GTDBuilding btype = static_cast<GTDUnit::GTDBuilding>(player.getCurrentlySelectedBuilding());
+	sprintf_s(shop, "Currently queued: %s. Costs: %d", GTDUnit::getName(btype), GTDUnit::getCost(btype));
 	sprintf_s(timerCount, "%.1lf", timeTilSpawn);
 	sprintf_s(moneyCount, "%d", player.getMoney());
 	SDL_Surface *killsTextSurface = TTF_RenderText_Solid(font, kills, textColor);
@@ -346,6 +350,8 @@ void GTDGame::drawUI()
 	SDL_Surface *levelCountSurface = TTF_RenderText_Solid(font, levelCount, textColor);
 	SDL_Surface *timerTextSurface = TTF_RenderText_Solid(font, timer, textColor);
 	SDL_Surface *timerCountSurface = TTF_RenderText_Solid(font, timerCount, textColor);
+
+	SDL_Surface *queuedTextSurface = TTF_RenderText_Solid(font, shop, textColor);
 
 	SDL_Surface *statusTextSurface = TTF_RenderText_Solid(font, statusMessage.c_str(), textColor);
 	SDL_Surface *statusAuxSurface = TTF_RenderText_Solid(font, statusAux.c_str(), textColor);
@@ -548,7 +554,7 @@ void GTDGame::updateStatusMessage() //updates dynamic text based on current play
 	switch (currentState)
 	{
 	case GAMELOST:
-		statusMessage = "Game Over!";
+		statusMessage = "Game Over! You lost!";
 		statusAux = " ";
 		break;
 	case GAMEWON:
@@ -570,11 +576,23 @@ void GTDGame::updateStatusMessage() //updates dynamic text based on current play
 			}
 			else if (selectedUnit->isBuilding())
 			{
-				int lowatk = selectedUnit->getAttackDMG() - selectedUnit->getAttackDMGRange();
-				int highatk = selectedUnit->getAttackDMG() + selectedUnit->getAttackDMGRange();	
-				char temp[24];
-				sprintf_s(temp, "attack: %d - %d", lowatk, highatk);
-				statusAux = temp;
+				
+				switch (selectedUnit->getBuildingType())
+				{
+				case GTDUnit::GTDBuilding::SPEEDASSIST:
+					statusAux = ": +10% speed for nearby towers";
+					break;
+				case GTDUnit::GTDBuilding::DMGASSIST:
+					statusAux = ": +25% damage for nearby towers";
+					break;
+				default:
+					char temp[40];
+					int lowatk = selectedUnit->getAttackDMG() - selectedUnit->getAttackDMGRange();
+					int highatk = selectedUnit->getAttackDMG() + selectedUnit->getAttackDMGRange();
+					sprintf_s(temp, "attack: %d - %d", lowatk, highatk);
+					statusAux = temp;
+					break;
+				}
 			}
 			else
 			{

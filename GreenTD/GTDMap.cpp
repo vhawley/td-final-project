@@ -220,7 +220,7 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 				unitRect.y = units.at(uindex).getPosY() - y - units.at(uindex).getCollision() / 2;
 				unitRect.w = units.at(uindex).getCollision();
 				unitRect.h = units.at(uindex).getCollision();
-				SDL_RenderCopy(renderer, units.at(uindex).getTexture(), NULL, &unitRect);
+				SDL_RenderCopyEx(renderer, units.at(uindex).getTexture(), NULL, &unitRect, (units.at(uindex).getFacingAngle() / (2 * M_PI)) * 360, NULL, SDL_FLIP_NONE); //converting radians to degrees. goddamnit sdl why you takin degrees
 
 				if (units.at(uindex).isWaveUnit())
 				{
@@ -255,18 +255,21 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 					}
 					SDL_RenderDrawRect(renderer, &unitRect);
 					SDL_RenderDrawRect(renderer, &boxRect); //Draw 2 boxes to make it easier to see....
-					int circX = units.at(uindex).getPosX() - x;
-					int circY = units.at(uindex).getPosY() - y;
-					int r = units.at(uindex).getAttackRange();
-					double dt = .01;
-					SDL_SetRenderDrawColor(renderer, 50, 255, 50, 1);
-					for (double theta = 0; theta < 2 * M_PI; theta += dt)
+					if (units.at(uindex).isBuilding())
 					{
-						int tX = circX + r*cos(theta);
-						int tY = circY + r*sin(theta);
-						int tXD = circX + r*cos(theta + dt);
-						int tYD = circY + r*sin(theta + dt);
-						SDL_RenderDrawLine(renderer, tX, tY, tXD, tYD);
+						int circX = units.at(uindex).getPosX() - x;
+						int circY = units.at(uindex).getPosY() - y;
+						int r = units.at(uindex).getAttackRange();
+						double dt = .01;
+						SDL_SetRenderDrawColor(renderer, 50, 255, 50, 1);
+						for (double theta = 0; theta < 2 * M_PI; theta += dt)
+						{
+							int tX = circX + r*cos(theta);
+							int tY = circY + r*sin(theta);
+							int tXD = circX + r*cos(theta + dt);
+							int tYD = circY + r*sin(theta + dt);
+							SDL_RenderDrawLine(renderer, tX, tY, tXD, tYD);
+						}
 					}
 				}
 
@@ -285,6 +288,18 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 			}
 		}
 	}
+	for (unsigned int pindex = 0; pindex < projectiles.size(); pindex++)
+	{
+		if (projectiles.at(pindex).getIsOnMap())
+		{
+			SDL_Rect projRect;
+			projRect.x = projectiles.at(pindex).getPosX() - x - 8; //all projectiles have 16 width/height... maybe change later
+			projRect.y = projectiles.at(pindex).getPosY() - y - 8;
+			projRect.w = 16;
+			projRect.h = 16;
+			SDL_RenderCopyEx(renderer, projectiles.at(pindex).getTexture(), NULL, &projRect, (projectiles.at(pindex).getFacingAngle() / (2 * M_PI)) * 360, NULL, SDL_FLIP_NONE);
+		}
+	}
 }
 
 void GTDMap::addUnit(GTDUnit *u)
@@ -295,6 +310,10 @@ void GTDMap::addUnit(GTDUnit *u)
 
 void GTDMap::stepUnits(int timeElapsed)
 {
+	for (unsigned int j = 0; j < projectiles.size(); j++)
+	{
+		projectiles.at(j).step(timeElapsed);
+	}
 	for (unsigned int i = 0; i < units.size(); i++)
 	{
 		if (units.at(i).isBuilding())
@@ -317,6 +336,40 @@ void GTDMap::stepUnits(int timeElapsed)
 		{
 			units.at(i).step(timeElapsed);
 		}
+		if (units.at(i).isBuilding())
+		{
+			if (units.at(i).hasQueuedProjectile())
+			{
+				GTDProjectile::GTDProjectileType pType;
+				switch (units.at(i).getBuildingType())
+				{
+				case GTDUnit::GTDBuilding::NORMAL:
+					pType = GTDProjectile::GTDProjectileType::NORMAL;
+					break;
+				case GTDUnit::GTDBuilding::FIRE:
+					pType = GTDProjectile::GTDProjectileType::FIRE;
+					break;
+				case GTDUnit::GTDBuilding::ICE:
+					pType = GTDProjectile::GTDProjectileType::ICE;
+					break;
+				case GTDUnit::GTDBuilding::LIGHTNING:
+					pType = GTDProjectile::GTDProjectileType::LIGHTNING;
+					break;
+				case GTDUnit::GTDBuilding::EARTH:
+					pType = GTDProjectile::GTDProjectileType::EARTH;
+					break;
+				default:
+					break;
+				}
+				int damage = units.at(i).getAttackDMG();
+				if (units.at(i).getAttackDMGRange() != 0)
+				{
+					damage += rand() % units.at(i).getAttackDMGRange() - units.at(i).getAttackDMGRange() / 2;
+				}
+				addProj(new GTDProjectile(pType, units.at(i).getOwner(), units.at(i).getPosX(), units.at(i).getPosY(), damage, units.at(i).getTarget(), renderer));
+				units.at(i).setQueuedProjectile(false);
+			}
+		}
 		if (units.at(i).isDead())
 		{
 			units.at(i).setOnMap(false);
@@ -333,6 +386,12 @@ void GTDMap::stepUnits(int timeElapsed)
 	}
 }
 
+void GTDMap::addProj(GTDProjectile *p)
+{
+	p->setOnMap(true);
+	projectiles.push_back(*p);
+}
+
 void GTDMap::removeUnitsNotOnMap() //only to use at end of level to save memory
 {
 	for (unsigned int i = 0; i < units.size(); i++)
@@ -344,6 +403,13 @@ void GTDMap::removeUnitsNotOnMap() //only to use at end of level to save memory
 		if (!units.at(i).isOnMap())
 		{
 			units.erase(units.begin() + i);
+		}
+	}
+	for (unsigned int j = 0; j < projectiles.size();j ++)
+	{
+		if (!projectiles.at(j).getIsOnMap()) //set building targets to null to prevent them attacking nonexistant units
+		{
+			projectiles.erase(projectiles.begin() + j);
 		}
 	}
 }

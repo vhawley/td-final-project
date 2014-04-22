@@ -8,6 +8,7 @@
 #include <SDL.h>
 #include "GTDRect.h"
 #include "GTDUnit.h"
+#include "GTDProjectile.h"
 #include "GTDPlayer.h"
 #include "GTDWaypoint.h"
 #include "GTDLevel.h"
@@ -29,6 +30,8 @@ public:
 
 	void addUnit(GTDUnit *u);
 	void stepUnits(int timeElapsed);
+
+	void addProj(GTDProjectile *p);
 
 	void removeUnitsNotOnMap();
 	int getNumWaveUnitsOnMap();
@@ -56,6 +59,7 @@ private:
 	SDL_Renderer *renderer;
 	std::vector<SDL_Texture *> textures;
 	std::vector<GTDUnit> units; //Units will be displayed on map but have ownership through their own "owner" pointer. *map should not be handling players*
+	std::vector<GTDProjectile> projectiles;
 	std::vector<GTDRect> rects;
 
 };
