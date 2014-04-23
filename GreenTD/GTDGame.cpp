@@ -294,7 +294,7 @@ void GTDGame::performSelection()
 		int selectY = screenY + std::min(mouseY, player.getOldMouseY());
 		int selectW = std::abs(mouseX - player.getOldMouseX());
 		int selectH = std::abs(mouseY - player.getOldMouseY());
-		if (selectW <= 2 && selectH <= 2) //adjust select rect when clicking not box selecting
+		if (selectW <= 32 && selectH <= 32) //adjust select rect when small box (click)
 		{
 			selectX -= map.getTileW() / 2;
 			selectY -= map.getTileH() / 2;
