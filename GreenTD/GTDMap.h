@@ -26,7 +26,7 @@ public:
 	bool loadTextures(); //Loads textures into textures vector
 	void spawnLevel(GTDLevel *level);
 
-	void draw(int x, int y, SDL_Renderer *renderer); //Draws base map.
+	void draw(int x, int y, SDL_Renderer *renderer); //Draws map and associated elements (units, projs, etc).
 
 	void addUnit(GTDUnit *u);
 	void stepUnits(int timeElapsed);
@@ -36,6 +36,7 @@ public:
 	void removeUnitsNotOnMap();
 	int getNumWaveUnitsOnMap();
 	void selectUnitsInRect(GTDRect *rect);
+	void issueAttackOrder(GTDPlayer *p, GTDRect *rect); //Order selected units owned by player p to attack random unit in rect
 
 	GTDUnit * getSelectedUnit();
 

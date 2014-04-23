@@ -25,6 +25,8 @@ public:
 	void queueBuilding();
 	bool hasBuildingQueued();
 	int getCurrentlySelectedBuilding();
+	bool hasAttackQueued();
+	void setAttackQueued(bool t);
 	void endQueueBuilding();
 	bool isSelectingBuildLocation();
 	int getOldMouseX();
@@ -43,6 +45,7 @@ private:
 	int currentlySelectedBuilding;
 	bool buildingQueued;
 	bool selecting;
+	bool attackQueued;
 
 	map<string, bool> keyDown;
 

@@ -6,6 +6,9 @@ GTDPlayer::GTDPlayer()
 	over = 0;
 	kills = 0;
 	lastkey = "NULL";
+	attackQueued = false;
+	building = 0; 
+	selecting = 0;
 }
 
 int GTDPlayer::getOver()
@@ -118,7 +121,7 @@ void GTDPlayer::processInput()
 				case SDL_BUTTON_LEFT:
 					std::cout << "Mouse1 Released" << std::endl;
 					keyDown["MOUSE1"] = false;
-					if (isSelectingBuildLocation())
+					if (building)
 					{
 						queueBuilding();
 					}
@@ -130,7 +133,14 @@ void GTDPlayer::processInput()
 				case SDL_BUTTON_RIGHT:
 					std::cout << "Mouse2 Released" << std::endl;
 					keyDown["MOUSE2"] = false;
-					building = 0;
+					if (building)
+					{
+						building = 0;
+					}
+					else
+					{
+						attackQueued = 1;
+					}
 					//Issue attack?
 					break;
 				case SDL_BUTTON_MIDDLE:
@@ -184,6 +194,17 @@ void GTDPlayer::queueBuilding()
 int GTDPlayer::getCurrentlySelectedBuilding()
 {
 	return currentlySelectedBuilding;
+}
+
+
+bool GTDPlayer::hasAttackQueued()
+{
+	return attackQueued;
+}
+
+void GTDPlayer::setAttackQueued(bool t)
+{
+	attackQueued = t;
 }
 
 

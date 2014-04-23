@@ -30,6 +30,7 @@ public:
 	void drawUI();
 	void updateGameState(int time);
 	void updateStatusMessage();
+	void queueAttacks();
 private:
 	bool loadTextures();
 	int IsGameOver;

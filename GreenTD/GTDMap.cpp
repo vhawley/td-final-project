@@ -442,6 +442,28 @@ void GTDMap::selectUnitsInRect(GTDRect *rect)
 	}
 }
 
+void GTDMap::issueAttackOrder(GTDPlayer *p, GTDRect *rect)
+{
+	GTDUnit *target = NULL;
+	for (unsigned int i = 0; i < units.size(); i++)
+	{
+		if (units.at(i).isWaveUnit() && rectContainsUnit(*rect, units.at(i)))
+		{
+			target = &units.at(i);
+		}
+	}
+	if (target) //if target was found
+	{
+		for (unsigned int i = 0; i < units.size(); i++)
+		{
+			if (units.at(i).isSelected() && units.at(i).getOwner() == p && units.at(i).isBuilding() && units.at(i).isWithinDistanceOfUnit(units.at(i).getAttackRange(), target))
+			{
+				units.at(i).setTarget(target);
+			}
+		}
+	}
+}
+
 GTDUnit * GTDMap::getSelectedUnit()
 {
 	int count = 0;

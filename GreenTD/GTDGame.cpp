@@ -83,14 +83,14 @@ void GTDGame::run()
 		timeElapsed = tickTimer.getTicks();
 		tickTimer.start();
 
+		//clear renderer
+		SDL_RenderClear(renderer);
+
 		//update game state
 		updateGameState(timeElapsed);
 
 		//update status message
 		updateStatusMessage();
-
-		//clear renderer
-		SDL_RenderClear(renderer);
 
 		//get mouse state
 		SDL_GetMouseState(&mouseX, &mouseY);
@@ -100,6 +100,9 @@ void GTDGame::run()
 
 		//select units
 		performSelection();
+
+		//queue attacks
+		queueAttacks();
 
 		//Step units
 		map.stepUnits(timeElapsed);
@@ -608,4 +611,24 @@ void GTDGame::updateStatusMessage() //updates dynamic text based on current play
 		break;
 	}
 	
+}
+
+void GTDGame::queueAttacks()
+{
+	if (player.hasAttackQueued())
+	{
+		GTDRect *attackRect = new GTDRect();
+		int selectX = screenX + mouseX;
+		int selectY = screenY + mouseY;
+		int selectW = map.getTileW() / 1.5;
+		int selectH = map.getTileH() / 1.5;
+		selectX -= map.getTileW() / 3; //arbitrary box size to detect enemy units
+		selectY -= map.getTileH() / 3;
+		attackRect->setX(selectX); //min to allow box selection in all directions
+		attackRect->setY(selectY);//min to allow box selection in all directions 
+		attackRect->setW(selectW);
+		attackRect->setH(selectH);
+		map.issueAttackOrder(&player, attackRect);
+		player.setAttackQueued(false);
+	}
 }
