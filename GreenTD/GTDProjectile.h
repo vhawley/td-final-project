@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <SDL.h>
+#include <SDL_mixer.h>
 #include "GTDPlayer.h"
 #include "GTDUnit.h"
 using namespace std;
@@ -32,6 +33,7 @@ class GTDProjectile
 		GTDProjectileType projType;
 		GTDPlayer *owner;
 		GTDUnit *target;
+		Mix_Chunk *impact;
 		SDL_Texture *texture;
 		bool isOnMap;
 		double posX;

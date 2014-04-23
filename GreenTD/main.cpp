@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 	}
 
 	int audio_rate = 44100;
-	int audio_format = AUDIO_S16;
+	int audio_format = MIX_DEFAULT_FORMAT;
 	int audio_channels = 2;
 	int audio_buffers = 4096;
 	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)) {

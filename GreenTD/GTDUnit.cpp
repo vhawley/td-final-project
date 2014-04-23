@@ -39,6 +39,7 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Ren
 			{
 				cout << "NORMAL tower texture load failed" << endl;
 			}
+			attackLaunch = Mix_LoadWAV("./assets/sound/NORMAL.wav");
 			break;
 		case FIRE:
 			cout << "Creating FIRE building..." << endl;
@@ -46,6 +47,7 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Ren
 			{
 				cout << "FIRE tower texture load failed" << endl;
 			}
+			attackLaunch = Mix_LoadWAV("./assets/sound/FIRE.wav");
 			break;
 		case ICE:
 			cout << "Creating ICE building..." << endl;
@@ -53,6 +55,7 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Ren
 			{
 				cout << "ICE tower texture load failed" << endl;
 			}
+			attackLaunch = Mix_LoadWAV("./assets/sound/ICE.wav");
 			break;
 		case LIGHTNING:
 			cout << "Creating LIGHTNING building..." << endl;
@@ -60,6 +63,7 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Ren
 			{
 				cout << "LIGHTNING tower texture load failed" << endl;
 			}
+			attackLaunch = Mix_LoadWAV("./assets/sound/LIGHTNING.wav");
 				break;
 		case EARTH:
 			cout << "Creating EARTH building..." << endl;
@@ -67,6 +71,7 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Ren
 			{
 				cout << "EARTH tower texture load failed" << endl;
 			}
+			attackLaunch = Mix_LoadWAV("./assets/sound/EARTH.wav");
 				break;
 		case SPEEDASSIST:
 			cout << "Creating SPEEDASSIST building..." << endl;
@@ -471,6 +476,7 @@ void GTDUnit::setHealth(int h)
 
 void GTDUnit::attackTarget()
 {
+	Mix_PlayChannel(-1, attackLaunch, 0);
 	queuedProjectile = true;
 }
 

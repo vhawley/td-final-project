@@ -6,6 +6,7 @@
 #include <string.h>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 #include "GTDPlayer.h"
 #include "GTDRect.h"
 #include "GTDWaypoint.h"
@@ -102,6 +103,7 @@ private:
 
 	SDL_Texture *text;
 	SDL_Renderer *renderer;
+	Mix_Chunk *attackLaunch;
 	string name;
 	GTDPlayer *owner; //Units must have an owner
 	bool queuedProjectile;

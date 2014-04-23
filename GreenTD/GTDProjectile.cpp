@@ -16,30 +16,35 @@ GTDProjectile::GTDProjectile(GTDProjectileType p, GTDPlayer *o, int x, int y, in
 		{
 			cout << "NORMAL tower projectile texture load failed" << endl;
 		}
+		impact = Mix_LoadWAV("./assets/sound/NORMALhit.wav");
 		break;
 	case FIRE:
 		if (!loadProjTexture("./assets/projectiles/FIRE.png", renderer))
 		{
 			cout << "FIRE tower projectile texture load failed" << endl;
 		}
+		impact = Mix_LoadWAV("./assets/sound/FIREhit.wav");
 		break;
 	case ICE:
 		if (!loadProjTexture("./assets/projectiles/ICE.png", renderer))
 		{
 			cout << "ICE tower projectile texture load failed" << endl;
 		}
+		impact = Mix_LoadWAV("./assets/sound/ICEhit.wav");
 		break;
 	case LIGHTNING:
 		if (!loadProjTexture("./assets/projectiles/LIGHTNING.png", renderer))
 		{
 			cout << "LIGHTNING tower projectile texture load failed" << endl;
 		}
+		impact = Mix_LoadWAV("./assets/sound/LIGHTNINGhit.wav");
 		break;
 	case EARTH:
 		if (!loadProjTexture("./assets/projectiles/EARTH.png", renderer))
 		{
 			cout << "EARTH tower projectile texture load failed" << endl;
 		}
+		impact = Mix_LoadWAV("./assets/sound/EARTHhit.wav");
 		break;
 	default:
 		texture = NULL;
@@ -88,6 +93,7 @@ void GTDProjectile::step(int timeElapsed)
 		{
 			int damageDealt = damage * ((100 - (double)target->getArmor()) / 100);
 			target->setHealth(target->getHealth() - damageDealt);
+			Mix_PlayChannel(-1, impact, 0);
 			std::cout << "target hit for " << damageDealt << " damage.  He now has " << target->getHealth() << " health." << std::endl;
 			if (target->isDead())
 			{
