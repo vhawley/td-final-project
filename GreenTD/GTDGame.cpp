@@ -12,7 +12,7 @@ GTDGame::GTDGame()
 	defColor.g = 0;
 	defColor.b = 0;
 	defColor.a = 1;
-	totalLevels = 5;
+	totalLevels = 10;
 	currentLevel = 0;
 }
 GTDGame::~GTDGame()
@@ -68,7 +68,15 @@ void GTDGame::run()
 	screenY = (map.getMapH() * map.getTileH() - S_HEIGHT) / 2 - 500;
 	currentState = PREGAME;
 
-	timeTilSpawn = 30;
+	if (debug)
+	{
+		timeTilSpawn = 10;
+		player.earn(1000);
+	}
+	else
+	{
+		timeTilSpawn = 30;
+	}
 
 	GTDTimer tickTimer;
 	tickTimer.start();
@@ -188,8 +196,8 @@ void GTDGame::drawBoxSelection()
 		mouseRect.h = std::abs(mouseY - player.getOldMouseY());
 		if (debug)
 		{
-			std::cout << "Should be drawing mouse rect..." << std::endl;
-			std::cout << mouseRect.x << " " << mouseRect.y << " " << mouseRect.w << " " << mouseRect.h << std::endl;
+			std::cout << "Should be drawing mouse rect at GTD coordinates:" << std::endl;
+			std::cout << mouseRect.x + screenX << " " << mouseRect.y + screenY << " " << mouseRect.w << " " << mouseRect.h << std::endl;
 		}
 		if (mouseRect.w > 0 && mouseRect.h > 0)
 		{
@@ -523,38 +531,40 @@ void GTDGame::updateGameState(int timeElapsed)
 		break;
 	case WAVEINPROGRESS:
 		numRemaining = map.getNumWaveUnitsOnMap();
-		if (numRemaining <= 0)
-		{
-			map.removeUnitsNotOnMap(); //for memory purposes
-			timeTilSpawn = 20;
-			currentState = WAVECOMPLETE;
-		}
-		else if (map.getLives() <= 0)
+		if (map.getLives() <= 0)
 		{
 			currentState = GAMELOST;
 		}
-		break;
-	case WAVECOMPLETE:
-		if (currentLevel >= totalLevels)
+		else if (numRemaining <= 0)
 		{
-			currentState = GAMEWON;
-		}
-		else
-		{
-			if (timeTilSpawn <= 0)
+			map.removeUnitsNotOnMap(); //for memory purposes
+			if (currentLevel >= totalLevels)
 			{
-				timeTilSpawn = 0;
-				currentLevel++;
-				GTDRect *testRect = new GTDRect(1700, 50, 400, 200);
-				char levelfile[40];
-				sprintf_s(levelfile, "./assets/dat/level%d.dat", currentLevel);
-				map.spawnLevel(new GTDLevel(levelfile, testRect, NULL));
-				currentState = WAVEINPROGRESS;
+				currentState = GAMEWON;
 			}
 			else
 			{
-				timeTilSpawn -= (double)timeElapsed / 1000;
+				timeTilSpawn = 20;
+				player.earn(75 + 50 * currentLevel);
+				currentState = WAVECOMPLETE;
 			}
+		}
+		
+		break;
+	case WAVECOMPLETE:
+		if (timeTilSpawn <= 0)
+		{
+			timeTilSpawn = 0;
+			currentLevel++;
+			GTDRect *testRect = new GTDRect(1700, 50, 400, 200);
+			char levelfile[40];
+			sprintf_s(levelfile, "./assets/dat/level%d.dat", currentLevel);
+			map.spawnLevel(new GTDLevel(levelfile, testRect, NULL));
+			currentState = WAVEINPROGRESS;
+		}
+		else
+		{
+			timeTilSpawn -= (double)timeElapsed / 1000;
 		}
 		break;
 	case GAMELOST:
@@ -599,10 +609,10 @@ void GTDGame::updateStatusMessage() //updates dynamic text based on current play
 				switch (selectedUnit->getBuildingType())
 				{
 				case GTDUnit::GTDBuilding::SPEEDASSIST:
-					statusAux = ": +10% speed for nearby towers";
+					statusAux = ": +25% speed for nearby towers";
 					break;
 				case GTDUnit::GTDBuilding::DMGASSIST:
-					statusAux = ": +25% damage for nearby towers";
+					statusAux = ": +50% damage for nearby towers";
 					break;
 				default:
 					char temp[40];

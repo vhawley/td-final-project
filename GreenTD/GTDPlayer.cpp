@@ -2,7 +2,7 @@
 
 GTDPlayer::GTDPlayer()
 {
-	money = 750;
+	money = 200;
 	over = 0;
 	kills = 0;
 	lastkey = "NULL";

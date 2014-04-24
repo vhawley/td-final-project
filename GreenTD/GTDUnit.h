@@ -57,6 +57,8 @@ public:
 	bool didReachEnd();
 	double getFacingAngle();
 
+	void setAttackCooldown(int c);
+	void setAttackDMG(int d);
 	int getMaxHealth();
 	int getHealth();
 	int getArmor();

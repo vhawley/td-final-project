@@ -318,6 +318,33 @@ void GTDMap::stepUnits(int timeElapsed)
 	{
 		if (units.at(i).isBuilding())
 		{
+			
+			if (units.at(i).getBuildingType() == GTDUnit::GTDBuilding::SPEEDASSIST)
+			{
+				for (unsigned int j = 0; j < units.size(); j++)
+				{
+					if (units.at(j).isBuilding())
+					{
+						if (units.at(i).isWithinDistanceOfUnit(units.at(i).getAttackRange(), &units.at(j)))
+						{
+							units.at(j).setAttackCooldown(GTDUnit::getAttackCooldown(units.at(j).getBuildingType()) * 0.75);
+						}
+					}
+				}
+			}
+			if (units.at(i).getBuildingType() == GTDUnit::GTDBuilding::DMGASSIST)
+			{
+				for (unsigned int j = 0; j < units.size(); j++)
+				{
+					if (units.at(j).isBuilding())
+					{
+						if (units.at(i).isWithinDistanceOfUnit(units.at(i).getAttackRange(), &units.at(j)))
+						{
+							units.at(j).setAttackDMG(GTDUnit::getAttackDMG(units.at(j).getBuildingType()) * 1.5);
+						}
+					}
+				}
+			}
 			if (!units.at(i).hasTarget())
 			{
 				for (unsigned int j = 0; j < units.size(); j++)
