@@ -12,7 +12,7 @@ using namespace std;
 class GTDLevel
 {
 public:
-	GTDLevel(char *filename, GTDRect *s, GTDWaypoint *way);
+	GTDLevel(char *filename, GTDRect *s);
 	~GTDLevel();
 	
 	bool init(char *filename);

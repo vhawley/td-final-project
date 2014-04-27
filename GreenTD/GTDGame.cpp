@@ -62,10 +62,10 @@ bool GTDGame::init()
 
 void GTDGame::run()
 {
-	//Default color = black
-
-	screenX = (map.getMapW() * map.getTileW() - S_WIDTH) / 2; //initial screen position
-	screenY = (map.getMapH() * map.getTileH() - S_HEIGHT) / 2 - 500;
+	screenX = 0;
+	screenY = 0;
+	//screenX = (map.getMapW() * map.getTileW() - S_WIDTH) / 2; //initial screen position = middle. commented it because units now start in the top left
+	//screenY = (map.getMapH() * map.getTileH() - S_HEIGHT) / 2 - 500;
 	currentState = PREGAME;
 
 	if (debug)
@@ -198,7 +198,7 @@ void GTDGame::drawBoxSelection()
 		{
 			std::cout << "Should be drawing mouse rect at GTD coordinates:" << std::endl;
 			std::cout << mouseRect.x + screenX << " " << mouseRect.y + screenY << " " << mouseRect.w << " " << mouseRect.h << std::endl;
-		}
+		}		
 		if (mouseRect.w > 0 && mouseRect.h > 0)
 		{
 			if (SDL_RenderDrawRect(renderer, &mouseRect))
@@ -518,10 +518,10 @@ void GTDGame::updateGameState(int timeElapsed)
 		{
 			timeTilSpawn = 0;
 			currentLevel++;
-			GTDRect *testRect = new GTDRect(1700, 50, 400, 200);
+			GTDRect *spawnRect = new GTDRect(128, 112, 190, 180);
 			char levelfile[40];
 			sprintf_s(levelfile, "./assets/dat/level%d.dat", currentLevel);
-			map.spawnLevel(new GTDLevel(levelfile, testRect, NULL));
+			map.spawnLevel(new GTDLevel(levelfile, spawnRect));
 			currentState = WAVEINPROGRESS;
 		}
 		else
@@ -556,10 +556,10 @@ void GTDGame::updateGameState(int timeElapsed)
 		{
 			timeTilSpawn = 0;
 			currentLevel++;
-			GTDRect *testRect = new GTDRect(1700, 50, 400, 200);
+			GTDRect *spawnRect = new GTDRect(116, 110, 210, 170);
 			char levelfile[40];
 			sprintf_s(levelfile, "./assets/dat/level%d.dat", currentLevel);
-			map.spawnLevel(new GTDLevel(levelfile, testRect, NULL));
+			map.spawnLevel(new GTDLevel(levelfile, spawnRect));
 			currentState = WAVEINPROGRESS;
 		}
 		else

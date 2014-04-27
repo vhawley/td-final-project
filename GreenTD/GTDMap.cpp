@@ -458,7 +458,7 @@ void GTDMap::selectUnitsInRect(GTDRect *rect)
 {
 	for (unsigned int i = 0; i < units.size(); i++)
 	{
-		if (rectContainsUnit(*rect, units.at(i)))
+		if (rectContainsUnit(*rect, units.at(i)) && units.at(i).isOnMap())
 		{
 			units.at(i).select();
 		}

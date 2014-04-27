@@ -429,6 +429,11 @@ void GTDUnit::setAttackDMG(int d)
 	attackDMG = d;
 }
 
+void GTDUnit::setMoveSpeed(int s)
+{
+	movespeed = s;
+}
+
 int GTDUnit::getMaxHealth()
 {
 	return maxhealth;
@@ -565,7 +570,7 @@ int GTDUnit::getAttackDMG(enum GTDBuilding b)
 	switch (b)
 	{
 		case NORMAL:
-			return 15;
+			return 18;
 		case FIRE:
 			return 45;
 		case ICE:
@@ -609,19 +614,19 @@ int GTDUnit::getAttackRange(enum GTDBuilding b)
 	switch (b)
 	{
 		case NORMAL:
-			return 175;
+			return 130;
 		case FIRE:
-			return 225;
+			return 175;
 		case ICE:
-			return 300;
+			return 250;
 		case LIGHTNING:
-			return 150;
+			return 100;
 		case EARTH:
-			return 400;
+			return 300;
 		case SPEEDASSIST:
-			return 250;
+			return 200;
 		case DMGASSIST:
-			return 250;
+			return 200;
 		default:
 			return 0;
 	}
@@ -671,13 +676,13 @@ int GTDUnit::getMaxHealth(enum GTDWaveUnit w)
 	switch (w)
 	{
 		case VILLAGER:
-			return 40;
+			return 55;
 		case SWORDSMAN:
-			return 110;
+			return 180;
 		case KNIGHT:
-			return 350;
+			return 450;
 		case KING:
-			return 750;
+			return 1200;
 		default:
 			return 50;
 	}
@@ -693,7 +698,7 @@ int GTDUnit::getBaseArmor(enum GTDWaveUnit w)
 		case KNIGHT:
 			return 12;
 		case KING:
-			return 15;
+			return 20;
 		default:
 			return 0;
 	}
@@ -703,13 +708,13 @@ int GTDUnit::getMoveSpeed(enum GTDWaveUnit w)
 	switch (w)
 	{
 		case VILLAGER:
-			return 45;
+			return 55;
 		case SWORDSMAN:
-			return 60;
-		case KNIGHT:
 			return 70;
+		case KNIGHT:
+			return 80;
 		case KING:
-			return 65;
+			return 75;
 		default:
 			return 50;
 	}
@@ -719,15 +724,15 @@ int GTDUnit::getBounty(enum GTDWaveUnit w)
 	switch (w)
 	{
 		case VILLAGER:
-			return 7;
+			return 8;
 		case SWORDSMAN:
-			return 15;
+			return 18;
 		case KNIGHT:
-			return 40;
+			return 34;
 		case KING:
-			return 60;
+			return 58;
 		default:
-			return 50;
+			return 10;
 	}
 }
 int GTDUnit::getBountyRange(enum GTDWaveUnit w)

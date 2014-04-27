@@ -9,6 +9,7 @@ GTDProjectile::GTDProjectile(GTDProjectileType p, GTDPlayer *o, int x, int y, in
 	target = t;
 	isOnMap = false;
 	movespeed = getMoveSpeed(p);
+	projType = p;
 	switch (p)
 	{
 	case NORMAL:
@@ -91,6 +92,15 @@ void GTDProjectile::step(int timeElapsed)
 	{
 		if (hasReachedTarget())
 		{
+			GTDUnit::GTDWaveUnit tType = target->getWaveUnitType();
+			switch (projType)
+			{
+			case ICE:
+				target->setMoveSpeed(GTDUnit::getMoveSpeed(tType) / 2);
+				break;
+			default:
+				break;
+			}
 			int damageDealt = damage * ((100 - (double)target->getArmor()) / 100);
 			target->setHealth(target->getHealth() - damageDealt);
 			Mix_PlayChannel(-1, impact, 0);
@@ -108,6 +118,7 @@ void GTDProjectile::step(int timeElapsed)
 				}
 				owner->earn(moneyEarned);
 				owner->addKill();
+				target->setOnMap(false);
 				std::cout << "Player earned " << moneyEarned << " money.  He now has " << owner->getMoney() << " money." << std::endl;
 			}
 			die();

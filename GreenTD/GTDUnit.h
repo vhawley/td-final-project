@@ -59,6 +59,7 @@ public:
 
 	void setAttackCooldown(int c);
 	void setAttackDMG(int d);
+	void setMoveSpeed(int s);
 	int getMaxHealth();
 	int getHealth();
 	int getArmor();

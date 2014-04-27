@@ -1,12 +1,24 @@
 #include "GTDLevel.h"
 
 
-GTDLevel::GTDLevel(char *filename, GTDRect *s, GTDWaypoint *way)
+GTDLevel::GTDLevel(char *filename, GTDRect *s)
 {
 	spawn = s;
-	//MAKE SURE TO CHANGE TO USE PARAMATER WAYPOINT
-	waypoint = new GTDWaypoint(new GTDWaypointNode(new GTDRect(1850, 200, 25, 25)));
-	waypoint->addNode(new GTDWaypointNode(new GTDRect(1850, 1800, 25, 25)));
+	waypoint = new GTDWaypoint(new GTDWaypointNode(new GTDRect(212, 305, 20, 20)));
+	waypoint->addNode(new GTDWaypointNode(new GTDRect(220, 768, 20, 20)));
+	waypoint->addNode(new GTDWaypointNode(new GTDRect(484, 750, 20, 30)));
+	waypoint->addNode(new GTDWaypointNode(new GTDRect(460, 490, 45, 20)));
+	waypoint->addNode(new GTDWaypointNode(new GTDRect(900, 493, 20, 38)));
+	waypoint->addNode(new GTDWaypointNode(new GTDRect(882, 202, 34, 24)));
+	waypoint->addNode(new GTDWaypointNode(new GTDRect(1286, 200, 22, 38)));
+	waypoint->addNode(new GTDWaypointNode(new GTDRect(1260, 1220, 40, 20)));
+	waypoint->addNode(new GTDWaypointNode(new GTDRect(970, 1208, 20, 28)));
+	waypoint->addNode(new GTDWaypointNode(new GTDRect(850, 1064, 30, 30)));
+	waypoint->addNode(new GTDWaypointNode(new GTDRect(850, 930, 40, 20)));
+	waypoint->addNode(new GTDWaypointNode(new GTDRect(1574, 946, 22, 38)));
+	waypoint->addNode(new GTDWaypointNode(new GTDRect(1553, 1188, 40, 20)));
+	waypoint->addNode(new GTDWaypointNode(new GTDRect(1766, 1166, 22, 34)));
+	waypoint->addNode(new GTDWaypointNode(new GTDRect(1746, 192, 34, 28)));
 	if (!init(filename))
 	{
 		std::cout << "Error loading level from file" << std::endl;
