@@ -2,9 +2,13 @@ README
 
 Terrain assets (/GreenTD/assets/terrain/) from Warcraft II: Tides of Darkness. Copyright Blizzard Corporation 1995.  Extracted by Maxim: http://www.spriters-resource.com/pc_computer/warcraft2/sheet/29501/ 
 
+Tower sound effects from Warcraft III: The Frozen Throne.  Copyright Blizzard Corporation 2003.
+Extracted by me.
+
 Earth tower icon courtesy of Teekatas Suwannakrua:  http://raindropmemory.deviantart.com
 
 Damage assist icon courtesy of ChrisL21: http://www.iconarchive.com/show/minecraft-icons-by-chrisl21/Diamond-Sword-icon.html
+
 
 Build instructions:
 
