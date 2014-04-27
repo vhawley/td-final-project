@@ -14,3 +14,5 @@ Build instructions:
 	4. Copy *.dll from ./GreenTD/include/SDL2/lib/x86 to ./Debug
 	5. If you are running with VS debugger, run by clicking the play button, and you are done.
 	6 (optional). If you want to run without VS debugger, copy the contents of ./GreenTD/assets to ./Debug/assets and run GreenTD.exe in ./Debug
+
+![Alt text](/GreenTD/assets/screenshot.png "Screenshot")
