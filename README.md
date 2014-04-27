@@ -15,4 +15,4 @@ Build instructions:
 	5. If you are running with VS debugger, run by clicking the play button, and you are done.
 	6 (optional). If you want to run without VS debugger, copy the contents of ./GreenTD/assets to ./Debug/assets and run GreenTD.exe in ./Debug
 
-![Alt text](/GreenTD/assets/screenshot.png "Screenshot")
+![Alt text](/GreenTD/assets/screenshot.PNG "Screenshot")
