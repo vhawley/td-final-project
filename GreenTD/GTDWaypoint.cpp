@@ -10,7 +10,7 @@ GTDWaypoint::GTDWaypoint(GTDWaypointNode *head)
 	first = head;
 }
 
-void GTDWaypoint::addNode(GTDWaypointNode *node)
+void GTDWaypoint::addNode(GTDWaypointNode *node) //adds node to end of waypoint
 {
 	GTDWaypointNode *temp = first;
 	while (temp->next != NULL)

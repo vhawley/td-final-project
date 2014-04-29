@@ -50,7 +50,8 @@ void GTDTimer::unpause()
 	{
 		if (paused)
 		{
-			pauseTicks = SDL_GetTicks() - startTicks;
+			startTicks = SDL_GetTicks() - pauseTicks; //start ticks set to difference in time between now and time paused.  when getticks(), you return the difference between that time and this time to get total time minus time paused.
+			pauseTicks = 0;
 			paused = false;
 		}
 		else
@@ -64,17 +65,17 @@ void GTDTimer::unpause()
 	}
 }
 
-int GTDTimer::getTicks()
+int GTDTimer::getTicks() 
 {
 	if (started)
 	{
 		if (paused)
 		{
-			return pauseTicks;
+			return pauseTicks; //returns time amount when it paused
 		}
 		else
 		{
-			return SDL_GetTicks() - startTicks;
+			return SDL_GetTicks() - startTicks; //returns number of milliseconds since starting
 		}
 	}
 	return 0; // not running

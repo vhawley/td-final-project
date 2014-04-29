@@ -3,5 +3,4 @@
 GTDWaypointNode::GTDWaypointNode(GTDRect *r)
 {
 	rect = r;
-
 }

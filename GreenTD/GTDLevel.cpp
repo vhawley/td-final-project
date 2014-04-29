@@ -3,7 +3,10 @@
 
 GTDLevel::GTDLevel(char *filename, GTDRect *s)
 {
+	//set spawn region
 	spawn = s;
+	
+	//set units waypoint
 	waypoint = new GTDWaypoint(new GTDWaypointNode(new GTDRect(212, 305, 20, 20)));
 	waypoint->addNode(new GTDWaypointNode(new GTDRect(220, 768, 20, 20)));
 	waypoint->addNode(new GTDWaypointNode(new GTDRect(484, 750, 20, 30)));
@@ -43,6 +46,8 @@ bool GTDLevel::init(char *filename)
 	string a;
 	string type;
 	int num;
+
+	//read file to enter units into stl map
 	while (levelFile >> a)
 	{
 		if (!isdigit(a.c_str()[0])) //if first letter is not a number, it is not a number

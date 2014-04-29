@@ -10,7 +10,7 @@ class GTDWaypoint
 {
 public:
 	GTDWaypoint();
-	GTDWaypoint(GTDWaypointNode *head);
+	GTDWaypoint(GTDWaypointNode *head); //create waypoint with an existing head node
 	void addNode(GTDWaypointNode *node);
 	void advance();
 	GTDWaypointNode *first;

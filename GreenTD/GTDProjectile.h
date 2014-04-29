@@ -21,8 +21,8 @@ class GTDProjectile
 		double getPosY();
 		double getFacingAngle();
 
-		void step(int timeElapsed);
-		void die();
+		void step(int timeElapsed); //applies game logic to projectiles
+		void die(); //kills itself when not needed
 		void setOnMap(bool t);
 		bool getIsOnMap();
 		bool hasReachedTarget();

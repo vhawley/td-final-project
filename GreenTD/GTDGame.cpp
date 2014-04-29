@@ -168,19 +168,19 @@ void GTDGame::moveScreen(int timeElapsed) //move screen independent of frame rat
 {
 	if (mouseX < 5 || player.isHolding("Left"))
 	{
-		screenX = std::max(0, screenX - (2 * timeElapsed));
+		screenX = std::max(0, screenX - (2 * timeElapsed)); //checks if game is at left most possible
 	}
 	if (mouseY < 5 || player.isHolding("Up"))
 	{
-		screenY = std::max(0, screenY - (2 * timeElapsed));
+		screenY = std::max(0, screenY - (2 * timeElapsed)); //checks if game is at top most possible
 	}
-	if (mouseX > S_WIDTH - 5 || player.isHolding("Right"))
+	if (mouseX > S_WIDTH - 5 || player.isHolding("Right")) 
 	{
-		screenX = std::min(map.getTileW() * map.getMapW() - S_WIDTH, screenX + (2 * timeElapsed));
+		screenX = std::min(map.getTileW() * map.getMapW() - S_WIDTH, screenX + (2 * timeElapsed));//checks if game is at right most possible
 	}
-	if (mouseY > S_HEIGHT - 5 || player.isHolding("Down"))
+	if (mouseY > S_HEIGHT - 5 || player.isHolding("Down")) 
 	{
-		screenY = std::min(map.getTileH() * map.getMapH() - S_HEIGHT + UIheight, screenY + (2 * timeElapsed));
+		screenY = std::min(map.getTileH() * map.getMapH() - S_HEIGHT + UIheight, screenY + (2 * timeElapsed));//checks if game is at right most possible
 	}
 }
 
@@ -214,40 +214,40 @@ void GTDGame::drawBuildBox()
 {
 	if (player.isSelectingBuildLocation())
 	{
-		int btileX = ( mouseX / map.getTileW() ) * map.getTileW();
-		int btileY = ( mouseY / map.getTileH() ) * map.getTileH();
+		GTDUnit::GTDBuilding btype = static_cast<GTDUnit::GTDBuilding>(player.getCurrentlySelectedBuilding());
+		int btileX = ( mouseX / map.getTileW() ) * map.getTileW(); //X of tile mouse is on with respect to screen location
+		int btileY = ( mouseY / map.getTileH() ) * map.getTileH();//Y of tile mouse is on with respect to screen location
 
-		int btileDeltaX = screenX % map.getTileW();
-		int btileDeltaY = screenY % map.getTileH();
+		int btileDeltaX = screenX % map.getTileW(); //X tile mouse offset
+		int btileDeltaY = screenY % map.getTileH(); //Y tile mouse offset
 
 		SDL_Rect buildingRect;
-		buildingRect.x = btileX - btileDeltaX;
-		buildingRect.y = btileY - btileDeltaY;
-		buildingRect.w = map.getTileW(); //Times building width when building is implemented
-		buildingRect.h = map.getTileH(); //times building height when building is implemented
+		buildingRect.x = btileX - btileDeltaX; //subtract from delta to get X of top left corner ot tile
+		buildingRect.y = btileY - btileDeltaY; //subtract from delta to get Y of top left corner ot tile
+		buildingRect.w = GTDUnit::getCollision(btype); //building width
+		buildingRect.h = GTDUnit::getCollision(btype); //building height THEY ARE SQUARES
 
-		int bX = btileX - btileDeltaX + screenX;
-		int bY = btileY - btileDeltaY + screenY;
+		int bX = btileX - btileDeltaX + screenX; //X of building in game terms
+		int bY = btileY - btileDeltaY + screenY; //Y of building in game terms
 
-		int mapIndexX = (btileX + screenX) / map.getTileW();
-		int mapIndexY = (btileY + screenY) / map.getTileH();
+		int mapIndexX = (btileX + screenX) / map.getTileW(); //map tile X to check
+		int mapIndexY = (btileY + screenY) / map.getTileH(); //map tile Y to check
 		
-		if (map.spaceIsBuildable(mapIndexY, mapIndexX))
+		if (map.spaceIsBuildable(mapIndexY, mapIndexX)) //checks terrain and existance of other buildings at location
 			{
-			GTDUnit::GTDBuilding btype = static_cast<GTDUnit::GTDBuilding>(player.getCurrentlySelectedBuilding());
 			int cost = GTDUnit::getCost(btype);
 			if (player.getMoney() >= cost)
 			{
-				SDL_SetRenderDrawColor(renderer, 0, 0, 255, 1);
+				SDL_SetRenderDrawColor(renderer, 0, 0, 255, 1); //blue if enough money + space is buildable
 			}
 			else
 			{
-				SDL_SetRenderDrawColor(renderer, 255, 255, 0, 1);
+				SDL_SetRenderDrawColor(renderer, 255, 255, 0, 1); //yellow if not enough money but space is buildable
 			}
 		}
 		else
 		{
-			SDL_SetRenderDrawColor(renderer, 255, 0, 0, 1);
+			SDL_SetRenderDrawColor(renderer, 255, 0, 0, 1); //red if space isn't buildable regardless of cost
 		}
 
 		if (debug)
@@ -268,7 +268,7 @@ void GTDGame::buildPlayerBuilding()
 		int cost = GTDUnit::getCost(btype);
 		if (player.getMoney() >= cost)
 		{
-			int btileX = (mouseX / map.getTileW()) * map.getTileW();
+			int btileX = (mouseX / map.getTileW()) * map.getTileW(); //next 12 lines: same as last function but actually build the tower this time
 			int btileY = (mouseY / map.getTileH()) * map.getTileH();
 
 			int btileDeltaX = screenX % map.getTileW();
@@ -300,7 +300,7 @@ void GTDGame::performSelection()
 	if (player.isSelecting())
 	{
 		std::cout << "Player is selecting... " << std::endl;
-		GTDRect *selectRect = new GTDRect();
+		GTDRect *selectRect = new GTDRect(); //select region in game coordinates, not screen coordinates
 		int selectX = screenX + std::min(mouseX, player.getOldMouseX());
 		int selectY = screenY + std::min(mouseY, player.getOldMouseY());
 		int selectW = std::abs(mouseX - player.getOldMouseX());
@@ -323,14 +323,14 @@ void GTDGame::performSelection()
 
 void GTDGame::drawUI()
 {
-	SDL_Rect UIRect;
+	SDL_Rect UIRect; //rect along bottom of game for UI
 	UIRect.x = 0;
 	UIRect.y = S_HEIGHT - UIheight;
 	UIRect.w = S_WIDTH;
 	UIRect.h = UIheight;
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderFillRect(renderer, &UIRect);
-	SDL_Color textColor;
+	SDL_Color textColor; //white text
 	textColor.r = 255;
 	textColor.g = 255;
 	textColor.b = 255;
@@ -355,6 +355,8 @@ void GTDGame::drawUI()
 	sprintf_s(shop, "Queued: %s. Costs: %d", bname.c_str(), cost);
 	sprintf_s(timerCount, "%.1lf", timeTilSpawn);
 	sprintf_s(moneyCount, "%d", player.getMoney());
+
+	//create surfaces from text
 	SDL_Surface *killsTextSurface = TTF_RenderText_Solid(font, kills, textColor);
 	SDL_Surface *killsCountSurface = TTF_RenderText_Solid(font, killCount, textColor);
 	SDL_Surface *livesTextSurface = TTF_RenderText_Solid(font, lives, textColor);
@@ -371,12 +373,14 @@ void GTDGame::drawUI()
 	SDL_Surface *moneyTextSurface = TTF_RenderText_Solid(font, money, textColor);
 	SDL_Surface *moneyCountSurface = TTF_RenderText_Solid(font, moneyCount, textColor);
 
+	//check for valid surfaces
 	if (!killsTextSurface || !killsCountSurface || !livesTextSurface || !livesCountSurface || !levelTextSurface || !levelCountSurface || !timerTextSurface || !timerCountSurface || !queuedTextSurface || !moneyTextSurface || !moneyCountSurface || !statusTextSurface || !statusAuxSurface)
 	{
 		std::cout << "Can't create surface: " << TTF_GetError() << std::endl;
 	}
 	else
 	{
+		//create textures from surface
 		SDL_Texture *killsTextTexture = SDL_CreateTextureFromSurface(renderer, killsTextSurface);
 		SDL_Texture *killCountTexture = SDL_CreateTextureFromSurface(renderer, killsCountSurface);
 		SDL_Texture *livesTextTexture = SDL_CreateTextureFromSurface(renderer, livesTextSurface);
@@ -409,6 +413,7 @@ void GTDGame::drawUI()
 		SDL_FreeSurface(moneyTextSurface);
 		SDL_FreeSurface(moneyCountSurface);
 
+		//define text regions
 		SDL_Rect killsTextRect;
 		killsTextRect.x = 4;
 		killsTextRect.y = S_HEIGHT - UIheight;
@@ -493,6 +498,7 @@ void GTDGame::drawUI()
 		SDL_RenderCopy(renderer, moneyTextTexture, NULL, &moneyTextRect);
 		SDL_RenderCopy(renderer, moneyCountTexture, NULL, &moneyCountRect);
 
+		//kill textures when rendererd
 		SDL_DestroyTexture(killsTextTexture);
 		SDL_DestroyTexture(killCountTexture);
 		SDL_DestroyTexture(livesTextTexture);
@@ -551,7 +557,7 @@ void GTDGame::updateGameState(int timeElapsed)
 		}
 		
 		break;
-	case WAVECOMPLETE:
+	case WAVECOMPLETE: //does the same thing as PREGAME right now.... but if i want to change what happens in between levels later i will want this
 		if (timeTilSpawn <= 0)
 		{
 			timeTilSpawn = 0;
@@ -592,10 +598,10 @@ void GTDGame::updateStatusMessage() //updates dynamic text based on current play
 		break;
 	default:
 		GTDUnit *selectedUnit = map.getSelectedUnit();
-		if (selectedUnit != NULL)
+		if (selectedUnit != NULL) //returns null if no or multiple units selected.... cant show text for multiple units
 		{
 			statusMessage = selectedUnit->getName();
-			if (selectedUnit->isWaveUnit())
+			if (selectedUnit->isWaveUnit()) //show health if wave unit
 			{
 				int health = selectedUnit->getHealth();
 				int maxHealth = selectedUnit->getMaxHealth();
@@ -603,18 +609,18 @@ void GTDGame::updateStatusMessage() //updates dynamic text based on current play
 				sprintf_s(temp, "health: %d / %d", health, maxHealth);
 				statusAux = temp;
 			}
-			else if (selectedUnit->isBuilding())
+			else if (selectedUnit->isBuilding()) //show building description
 			{
 				
 				switch (selectedUnit->getBuildingType())
 				{
-				case GTDUnit::GTDBuilding::SPEEDASSIST:
+				case GTDUnit::GTDBuilding::SPEEDASSIST: //describe effects of speed assist
 					statusAux = ": +25% speed for nearby towers";
 					break;
-				case GTDUnit::GTDBuilding::DMGASSIST:
+				case GTDUnit::GTDBuilding::DMGASSIST: //describe effects of damage assist
 					statusAux = ": +50% damage for nearby towers";
 					break;
-				default:
+				default: //show attack damage range
 					char temp[40];
 					int lowatk = selectedUnit->getAttackDMG() - selectedUnit->getAttackDMGRange();
 					int highatk = selectedUnit->getAttackDMG() + selectedUnit->getAttackDMGRange();
@@ -625,7 +631,7 @@ void GTDGame::updateStatusMessage() //updates dynamic text based on current play
 			}
 			else
 			{
-				//shouldnt get here
+				//shouldnt get here units are either buildings or wave units
 				statusAux = " ";
 			}
 		}
@@ -648,7 +654,7 @@ void GTDGame::queueAttacks()
 		int selectY = screenY + mouseY;
 		int selectW = map.getTileW() / 1.5;
 		int selectH = map.getTileH() / 1.5;
-		selectX -= map.getTileW() / 3; //arbitrary box size to detect enemy units
+		selectX -= map.getTileW() / 3; //arbitrary box size to detect enemy units within a right click
 		selectY -= map.getTileH() / 3;
 		attackRect->setX(selectX); //min to allow box selection in all directions
 		attackRect->setY(selectY);//min to allow box selection in all directions 

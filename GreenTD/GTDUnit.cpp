@@ -13,6 +13,8 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Ren
 	renderer = rend;
 	setPosX(x);
 	setPosY(y);
+
+	//set building attributes 
 	cost = getCost(b);
 	name = getName(b);
 	collision = getCollision(b);
@@ -20,8 +22,14 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Ren
 	attackDMGRange = getAttackDMGRange(b);
 	attackRange = getAttackRange(b);
 	attackCooldown = getAttackCooldown(b);
+
+	//set owner (always the player from GTDGame... but if this ever becomes multiplayer this will mean something)
 	owner = own;
+
+	//ready to attack the moment from creation
 	atkCooldownTimer = 0;
+
+	//buildings dont use these
 	armor = 0;
 	invuln = false;
 	bounty = 0;
@@ -31,6 +39,8 @@ GTDUnit::GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Ren
 	health = maxhealth;
 	facingAngle = 0;
 	queuedProjectile = false;
+
+	//load textures and attack launch sounds depending on tower type
 	switch (b)
 	{
 		case NORMAL:
@@ -104,10 +114,10 @@ GTDUnit::GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend, GTD
 	reachedEnd = false;
 	setPosX(x);
 	setPosY(y);
+	facingAngle = 0;
+
+	//set waveunit attributes
 	name = getName(w);
-	owner = NULL;
-	cost = 0;
-	attackRange = 0;
 	maxhealth = getMaxHealth(w);
 	health = maxhealth;
 	armor = getBaseArmor(w);
@@ -115,15 +125,21 @@ GTDUnit::GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend, GTD
 	movespeed = getMoveSpeed(w);
 	bounty = getBounty(w);
 	bountyrange = getBountyRange(w);
+
+	//no owner
+	owner = NULL;
+
+	//waveunits dont use these
+	cost = 0;
+	attackRange = 0;
 	attackDMG = 0;
 	attackDMGRange = 0;
-	facingAngle = 0;
 	queuedProjectile = false;
 	if (waypoint.first)
 	{
 		issueMoveToRect(waypoint.first->rect);
 	}
-	switch (w)
+	switch (w) //load texture based on waveunit type
 	{
 	case VILLAGER:
 		cout << "Creating VILLAGER unit..." << endl;
@@ -272,6 +288,7 @@ void GTDUnit::step(int timeElapsed) //time elapsed in milliseconds
 			{
 				if (target->isDead() || target->didReachEnd() || target->getInvuln() || !isWithinDistanceOfUnit(attackRange, target))
 				{
+					//reset target if target isn't attackable for any reason when the unit is able to attack (atkcooldown reaches 0)
 					setTarget(NULL);
 				}
 				else
@@ -297,7 +314,7 @@ void GTDUnit::step(int timeElapsed) //time elapsed in milliseconds
 		{
 			if (atDestination())
 			{
-				//set next Destination
+				//set next Destination if at waypoint checkpoint or set reached end flag if it has no more waypoints
 				if (waypoint.first->next != NULL)
 				{
 					waypoint.advance();
@@ -495,6 +512,7 @@ void GTDUnit::attackTarget()
 	queuedProjectile = true;
 }
 
+//static functions for unit attributes
 string GTDUnit::getName(enum GTDBuilding b)
 {
 	switch (b)

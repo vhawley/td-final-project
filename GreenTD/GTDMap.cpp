@@ -162,7 +162,7 @@ void GTDMap::spawnLevel(GTDLevel *level)
 	}
 }
 
-void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
+void GTDMap::draw(int x, int y, SDL_Renderer *renderer) //x and y are top left coordinates of map... typically used my GTDGame for passing in screenx/screeny
 {
 	SDL_Rect tileRect;
 	tileRect.x = 0;
@@ -180,10 +180,10 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 	tileRect.y = -tileDeltaY;
 
 	//Loops through specific position in 2D array to draw only the textures needed
-	for (int i = std::max(tileY, 0); i < std::min(tileY + 24, getMapH()); i++) //Hardcoded tile length for now...
+	for (int i = std::max(tileY, 0); i < std::min(tileY + 24, getMapH()); i++) //Hardcoded # of tiles drawn for now... its okay but it probably draws more than it needs to
 	{
 		tileRect.x = -tileDeltaX;
-		for (int j = std::max(tileX, 0); j < std::min(tileX + 41, getMapW()); j++) //Hardcoded tile length for now... should come up with better way
+		for (int j = std::max(tileX, 0); j < std::min(tileX + 41, getMapW()); j++) //Hardcoded tile length for now... its okay but it probably draws more than it needs to
 		{
 			//Render texture based on index in array
 			int textureI = getMapBoard(i, j) - 1;
@@ -205,7 +205,7 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 	//Draw units on map
 	for (unsigned int uindex = 0; uindex < units.size(); uindex++)
 	{
-		if (units.at(uindex).isOnMap())
+		if (units.at(uindex).isOnMap()) //only draw if unit is on map
 		{
 			GTDRect screenRect;
 			screenRect.setX(x - units.at(uindex).getCollision() / 2);
@@ -221,8 +221,9 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 				unitRect.w = units.at(uindex).getCollision();
 				unitRect.h = units.at(uindex).getCollision();
 				SDL_RenderCopyEx(renderer, units.at(uindex).getTexture(), NULL, &unitRect, (units.at(uindex).getFacingAngle() / (2 * M_PI)) * 360, NULL, SDL_FLIP_NONE); //converting radians to degrees. goddamnit sdl why you takin degrees
+				//sometimes this causes units to look like theyre walking backwards but not that important to fix
 
-				if (units.at(uindex).isWaveUnit())
+				if (units.at(uindex).isWaveUnit()) //draw health bar if theyre a waveunit
 				{
 					double healthPct = (double)units.at(uindex).getHealth() / units.at(uindex).getMaxHealth();
 					SDL_Rect healthRect;
@@ -238,7 +239,7 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 					SDL_RenderFillRect(renderer, &healthRect);
 				}
 
-				if (units.at(uindex).isSelected())
+				if (units.at(uindex).isSelected()) //draw blue / red box around unit to show they are selected
 				{
 					SDL_Rect boxRect;
 					boxRect.x = unitRect.x - 1;
@@ -283,12 +284,12 @@ void GTDMap::draw(int x, int y, SDL_Renderer *renderer)
 				SDL_RenderDrawRect(renderer, &destRect);
 				*/
 
-				//for testing waypoint
+				//for showing waypoints during testing
 
 			}
 		}
 	}
-	for (unsigned int pindex = 0; pindex < projectiles.size(); pindex++)
+	for (unsigned int pindex = 0; pindex < projectiles.size(); pindex++) //draw projectiles
 	{
 		if (projectiles.at(pindex).getIsOnMap())
 		{
@@ -310,7 +311,7 @@ void GTDMap::addUnit(GTDUnit *u)
 
 void GTDMap::stepUnits(int timeElapsed)
 {
-	for (unsigned int j = 0; j < projectiles.size(); j++)
+	for (unsigned int j = 0; j < projectiles.size(); j++) //step projectiles first
 	{
 		projectiles.at(j).step(timeElapsed);
 	}
@@ -319,7 +320,7 @@ void GTDMap::stepUnits(int timeElapsed)
 		if (units.at(i).isBuilding())
 		{
 			
-			if (units.at(i).getBuildingType() == GTDUnit::GTDBuilding::SPEEDASSIST)
+			if (units.at(i).getBuildingType() == GTDUnit::GTDBuilding::SPEEDASSIST) //give speed aura to towers near speed assist
 			{
 				for (unsigned int j = 0; j < units.size(); j++)
 				{
@@ -332,7 +333,7 @@ void GTDMap::stepUnits(int timeElapsed)
 					}
 				}
 			}
-			if (units.at(i).getBuildingType() == GTDUnit::GTDBuilding::DMGASSIST)
+			if (units.at(i).getBuildingType() == GTDUnit::GTDBuilding::DMGASSIST) //give damage aura to towers near speed assist
 			{
 				for (unsigned int j = 0; j < units.size(); j++)
 				{
@@ -345,7 +346,7 @@ void GTDMap::stepUnits(int timeElapsed)
 					}
 				}
 			}
-			if (!units.at(i).hasTarget())
+			if (!units.at(i).hasTarget()) //if unit doesnt have a target find one.  technically speed/dmg assist towers will have 'targets' after this but they don't do anything with targets so it doesnt matter
 			{
 				for (unsigned int j = 0; j < units.size(); j++)
 				{
@@ -359,13 +360,13 @@ void GTDMap::stepUnits(int timeElapsed)
 				}
 			}
 		}
-		if (units.at(i).isOnMap())
+		if (units.at(i).isOnMap()) //step all units
 		{
 			units.at(i).step(timeElapsed);
 		}
 		if (units.at(i).isBuilding())
 		{
-			if (units.at(i).hasQueuedProjectile())
+			if (units.at(i).hasQueuedProjectile()) //if building has projectile queued after stepping (they attacked successfully), create a projectile
 			{
 				GTDProjectile::GTDProjectileType pType;
 				switch (units.at(i).getBuildingType())
@@ -397,17 +398,17 @@ void GTDMap::stepUnits(int timeElapsed)
 				units.at(i).setQueuedProjectile(false);
 			}
 		}
-		if (units.at(i).isDead())
+		if (units.at(i).isDead()) //if unit is dead after stepping, take them off map. *actual removal from vector occurs at end of round to avoid targetting issues*
 		{
 			units.at(i).setOnMap(false);
 		}
-		else if(units.at(i).didReachEnd() && units.at(i).isOnMap())
+		else if(units.at(i).didReachEnd() && units.at(i).isOnMap()) //if unit reached end successfully
 		{
 			lives--;
 			units.at(i).setOnMap(false);
 			if (lives <= 0)
 			{
-				//gg
+				//game will know and report loss appropriately
 			}
 		}
 	}
@@ -419,7 +420,7 @@ void GTDMap::addProj(GTDProjectile *p)
 	projectiles.push_back(*p);
 }
 
-void GTDMap::removeUnitsNotOnMap() //only to use at end of level to save memory
+void GTDMap::removeUnitsNotOnMap() //remove from vector to save memory. only to use at end of level to prevent targetting issues
 {
 	for (unsigned int i = 0; i < units.size(); i++)
 	{
@@ -441,7 +442,7 @@ void GTDMap::removeUnitsNotOnMap() //only to use at end of level to save memory
 	}
 }
 
-int GTDMap::getNumWaveUnitsOnMap()
+int GTDMap::getNumWaveUnitsOnMap() //for determining whether level is over
 {
 	int count = 0;
 	for (unsigned int i = 0; i < units.size(); i++)
@@ -454,7 +455,7 @@ int GTDMap::getNumWaveUnitsOnMap()
 	return count;
 }
 
-void GTDMap::selectUnitsInRect(GTDRect *rect)
+void GTDMap::selectUnitsInRect(GTDRect *rect) //used with box selection
 {
 	for (unsigned int i = 0; i < units.size(); i++)
 	{
@@ -469,7 +470,7 @@ void GTDMap::selectUnitsInRect(GTDRect *rect)
 	}
 }
 
-void GTDMap::issueAttackOrder(GTDPlayer *p, GTDRect *rect)
+void GTDMap::issueAttackOrder(GTDPlayer *p, GTDRect *rect) //selected units owned by player attack unit in click rect. if multiple units in rect, attack first one in vector.
 {
 	GTDUnit *target = NULL;
 	for (unsigned int i = 0; i < units.size(); i++)

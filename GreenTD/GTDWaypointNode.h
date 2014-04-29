@@ -6,7 +6,7 @@
 class GTDWaypointNode
 {
 public:
-	GTDWaypointNode(GTDRect *r);
+	GTDWaypointNode(GTDRect *r); //create node with rect pointer r
 	GTDWaypointNode *next;
 	GTDRect *rect;
 private:

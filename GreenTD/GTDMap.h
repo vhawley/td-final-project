@@ -28,14 +28,14 @@ public:
 
 	void draw(int x, int y, SDL_Renderer *renderer); //Draws map and associated elements (units, projs, etc).
 
-	void addUnit(GTDUnit *u);
-	void stepUnits(int timeElapsed);
+	void addUnit(GTDUnit *u); //adds unit at pointer to units vector
+	void stepUnits(int timeElapsed); //applies game logic at each tick
 
 	void addProj(GTDProjectile *p);
 
-	void removeUnitsNotOnMap();
-	int getNumWaveUnitsOnMap();
-	void selectUnitsInRect(GTDRect *rect);
+	void removeUnitsNotOnMap(); //removes units with isOnMap set to false
+	int getNumWaveUnitsOnMap(); //counts waveunits with isOnMap set to true
+	void selectUnitsInRect(GTDRect *rect); //sets selected flag for units in rect to true, others to false
 	void issueAttackOrder(GTDPlayer *p, GTDRect *rect); //Order selected units owned by player p to attack random unit in rect
 
 	GTDUnit * getSelectedUnit();

@@ -10,7 +10,7 @@ GTDProjectile::GTDProjectile(GTDProjectileType p, GTDPlayer *o, int x, int y, in
 	isOnMap = false;
 	movespeed = getMoveSpeed(p);
 	projType = p;
-	switch (p)
+	switch (p) //load appropriate texture / sound
 	{
 	case NORMAL:
 		if (!loadProjTexture("./assets/projectiles/NORMAL.png", renderer))
@@ -84,18 +84,18 @@ double GTDProjectile::getFacingAngle()
 
 void GTDProjectile::step(int timeElapsed)
 {
-	if (!target || target->isDead() || target->getInvuln() || !target->isOnMap())
+	if (!target || target->isDead() || target->getInvuln() || !target->isOnMap()) //if unit is not attackable at any point during the proj's course, kill itself
 	{
 		die();
 	}
 	else
 	{
-		if (hasReachedTarget())
+		if (hasReachedTarget()) //apply damage and play sound when proj reaches target
 		{
 			GTDUnit::GTDWaveUnit tType = target->getWaveUnitType();
 			switch (projType)
 			{
-			case ICE:
+			case ICE: //ice towers slow enemies indefinitely
 				target->setMoveSpeed(GTDUnit::getMoveSpeed(tType) / 2);
 				break;
 			default:
@@ -172,7 +172,7 @@ bool GTDProjectile::hasReachedTarget()
 	double dy = target->getPosY() - posY;
 
 	double distance = sqrt(dx*dx + dy*dy);
-	if (distance <= target->getCollision()/4) //if projetile is in a box half width and half height of target, it has reached
+	if (distance <= target->getCollision()/4) //if projectile is in a box half width and half height from center of target, it has reached target
 	{
 		return true;
 	}
@@ -181,7 +181,7 @@ bool GTDProjectile::hasReachedTarget()
 
 bool GTDProjectile::loadProjTexture(string fn, SDL_Renderer *renderer)
 {
-	//Load BMP from filepath
+	//Load image from filepath
 	SDL_Surface *PNG = IMG_Load(fn.c_str());
 	texture = SDL_CreateTextureFromSurface(renderer, PNG);
 

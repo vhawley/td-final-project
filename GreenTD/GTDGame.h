@@ -23,14 +23,14 @@ public:
 	void run();
 	void quit();
 	void moveScreen(int time);
-	void drawBoxSelection();
-	void drawBuildBox();
-	void buildPlayerBuilding();
-	void performSelection();
-	void drawUI();
-	void updateGameState(int time);
-	void updateStatusMessage();
-	void queueAttacks();
+	void drawBoxSelection(); //when player is box selecting
+	void drawBuildBox(); //blue box when player is building
+	void buildPlayerBuilding(); //perform build on map
+	void performSelection(); //when player lets go of box select, select units in rect
+	void drawUI(); //draws text on bottom of screen
+	void updateGameState(int time); //checks game conditions at each tick
+	void updateStatusMessage(); //updates utility text at bottom right depending on situtaiton
+	void queueAttacks(); //if player right clicks with buildings he owns selected, issue attack
 private:
 	bool loadTextures();
 	int IsGameOver;

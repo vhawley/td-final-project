@@ -20,9 +20,9 @@ public:
 	enum GTDBuilding{ NORMAL, FIRE, ICE, LIGHTNING, EARTH, SPEEDASSIST, DMGASSIST }; //Count last for getting number of building types
 	enum GTDWaveUnit{ VILLAGER, SWORDSMAN, KNIGHT, KING }; //Count for getting number of types
 
-	GTDUnit();
-	GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Renderer *rend); //Building
-	GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend, GTDWaypoint way); //WaveUnit
+	GTDUnit(); //should not use
+	GTDUnit(enum GTDBuilding b, GTDPlayer *own, double x, double y, SDL_Renderer *rend); //Building constructor
+	GTDUnit(enum GTDWaveUnit w, double x, double y, SDL_Renderer *rend, GTDWaypoint way); //WaveUnit constructor
 	double getPosX();
 	double getPosY();
 	int getCollision();
@@ -33,12 +33,13 @@ public:
 	GTDBuilding getBuildingType();
 	GTDWaveUnit getWaveUnitType();
 
-	void step(int timeElapsed);
+	void step(int timeElapsed); //applies game logic to unit 
 
-	void issueMoveToPoint(int x, int y);
-	void issueMoveToRect(GTDRect *rect);
-	bool isWithinDistanceOfUnit(double d, GTDUnit *u);
+	void issueMoveToPoint(int x, int y); //creates rect for unit and sets as current dest
+	void issueMoveToRect(GTDRect *rect); //sets rect as dest
+	bool isWithinDistanceOfUnit(double d, GTDUnit *u); //checks distance between unit and u
 
+	//getters/setters
 	bool isOnMap();
 	bool isBuilding();
 	bool isWaveUnit();
@@ -73,6 +74,8 @@ public:
 
 	void setHealth(int h);
 
+
+	//static functions for building/waveunit attributes
 	static string getName(enum GTDBuilding b);
 	static int getCollision(enum GTDBuilding b);
 	static int getCost(enum GTDBuilding b);
