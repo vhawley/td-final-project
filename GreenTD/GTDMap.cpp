@@ -3,7 +3,7 @@
 GTDMap::GTDMap()
 {
 	initialized = 0;
-	lives = 50;
+	lives = 40;
 }
 
 GTDMap::GTDMap(char *filename, SDL_Renderer *rend)

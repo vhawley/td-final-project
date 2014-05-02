@@ -694,7 +694,7 @@ int GTDUnit::getMaxHealth(enum GTDWaveUnit w)
 	switch (w)
 	{
 		case VILLAGER:
-			return 55;
+			return 51;
 		case SWORDSMAN:
 			return 180;
 		case KNIGHT:
@@ -726,13 +726,13 @@ int GTDUnit::getMoveSpeed(enum GTDWaveUnit w)
 	switch (w)
 	{
 		case VILLAGER:
-			return 55;
+			return 60;
 		case SWORDSMAN:
-			return 70;
+			return 77;
 		case KNIGHT:
-			return 80;
+			return 87;
 		case KING:
-			return 75;
+			return 82;
 		default:
 			return 50;
 	}
