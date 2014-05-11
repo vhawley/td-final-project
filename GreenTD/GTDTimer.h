@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#ifdef TARGET_OS_MAC
+#ifdef __APPLE__
 #include <SDL2/SDL.h>
 #elif _WIN64
 #include <SDL.h>

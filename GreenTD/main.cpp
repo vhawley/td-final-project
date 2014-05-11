@@ -2,7 +2,7 @@
 #include <math.h>
 #include <time.h>
 #include <string>
-#ifdef TARGET_OS_MAC
+#ifdef __APPLE__
 #include <SDL2/SDL.h>
 #include <SDL2_mixer/SDL_mixer.h>
 #elif _WIN64

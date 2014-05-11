@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#ifdef TARGET_OS_MAC
+#ifdef __APPLE__
 #include <SDL2/SDL.h>
 #elif _WIN64
 #include <SDL.h>

@@ -30,7 +30,7 @@ bool GTDGame::init()
 		SDL_WINDOWPOS_UNDEFINED,
 		S_WIDTH,
 		S_HEIGHT,
-		SDL_WINDOW_FULLSCREEN | SDL_WINDOW_INPUT_GRABBED);
+        SDL_WINDOW_INPUT_GRABBED);
 
 	//Create Renderer
 	renderer = SDL_CreateRenderer(
@@ -346,15 +346,15 @@ void GTDGame::drawUI()
 	char timerCount[6];
 	char money[8] = "Money: ";
 	char moneyCount[10];
-	sprintf_s(killCount, "%d", player.getKills());
-	sprintf_s(livesCount, "%d", map.getLives());
-	sprintf_s(levelCount, "%d", currentLevel);
+    sprintf(killCount, "%d", player.getKills());
+	sprintf(livesCount, "%d", map.getLives());
+	sprintf(levelCount, "%d", currentLevel);
 	GTDUnit::GTDBuilding btype = static_cast<GTDUnit::GTDBuilding>(player.getCurrentlySelectedBuilding());
 	string bname = GTDUnit::getName(btype);
 	int cost = GTDUnit::getCost(btype);
-	sprintf_s(shop, "Queued: %s. Costs: %d", bname.c_str(), cost);
-	sprintf_s(timerCount, "%.1lf", timeTilSpawn);
-	sprintf_s(moneyCount, "%d", player.getMoney());
+	sprintf(shop, "Queued: %s. Costs: %d", bname.c_str(), cost);
+	sprintf(timerCount, "%.1lf", timeTilSpawn);
+	sprintf(moneyCount, "%d", player.getMoney());
 
 	//create surfaces from text
 	SDL_Surface *killsTextSurface = TTF_RenderText_Solid(font, kills, textColor);
@@ -526,7 +526,7 @@ void GTDGame::updateGameState(int timeElapsed)
 			currentLevel++;
 			GTDRect *spawnRect = new GTDRect(128, 112, 190, 180);
 			char levelfile[40];
-			sprintf_s(levelfile, "./assets/dat/level%d.dat", currentLevel);
+			sprintf(levelfile, "./assets/dat/level%d.dat", currentLevel);
 			map.spawnLevel(new GTDLevel(levelfile, spawnRect));
 			currentState = WAVEINPROGRESS;
 		}
@@ -564,7 +564,7 @@ void GTDGame::updateGameState(int timeElapsed)
 			currentLevel++;
 			GTDRect *spawnRect = new GTDRect(116, 110, 210, 170);
 			char levelfile[40];
-			sprintf_s(levelfile, "./assets/dat/level%d.dat", currentLevel);
+			sprintf(levelfile, "./assets/dat/level%d.dat", currentLevel);
 			map.spawnLevel(new GTDLevel(levelfile, spawnRect));
 			currentState = WAVEINPROGRESS;
 		}
@@ -606,7 +606,7 @@ void GTDGame::updateStatusMessage() //updates dynamic text based on current play
 				int health = selectedUnit->getHealth();
 				int maxHealth = selectedUnit->getMaxHealth();
 				char temp[24];
-				sprintf_s(temp, "health: %d / %d", health, maxHealth);
+				sprintf(temp, "health: %d / %d", health, maxHealth);
 				statusAux = temp;
 			}
 			else if (selectedUnit->isBuilding()) //show building description
@@ -624,7 +624,7 @@ void GTDGame::updateStatusMessage() //updates dynamic text based on current play
 					char temp[40];
 					int lowatk = selectedUnit->getAttackDMG() - selectedUnit->getAttackDMGRange();
 					int highatk = selectedUnit->getAttackDMG() + selectedUnit->getAttackDMGRange();
-					sprintf_s(temp, "attack: %d - %d", lowatk, highatk);
+					sprintf(temp, "attack: %d - %d", lowatk, highatk);
 					statusAux = temp;
 					break;
 				}

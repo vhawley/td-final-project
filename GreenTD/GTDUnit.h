@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <math.h>
 #include <string.h>
-#ifdef TARGET_OS_MAC
+#ifdef __APPLE__
 #include <SDL2/SDL.h>
 #include <SDL2_mixer/SDL_mixer.h>
 #include <SDL2_image/SDL_image.h>

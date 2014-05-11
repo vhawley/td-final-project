@@ -129,7 +129,7 @@ bool GTDMap::loadTextures()
 	{
 		char filepath[50];
 		//Create filepath from i
-		sprintf_s(filepath, "./assets/terrain/%d.bmp", i);
+		sprintf(filepath, "./assets/terrain/%d.bmp", i);
 		//Load BMP from filepath
 		SDL_Surface *BMP = SDL_LoadBMP(filepath);
 		//Add BMP to textures vector

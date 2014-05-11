@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>    // std::max/min
-#ifdef TARGET_OS_MAC
+#ifdef __APPLE__
 #include <SDL2/SDL.h>
 #include <SDL2_mixer/SDL_mixer.h>
 #include <SDL2_image/SDL_image.h>
