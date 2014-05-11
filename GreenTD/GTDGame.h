@@ -4,10 +4,22 @@
 #include <string>
 #include <vector>
 #include <algorithm>    // std::max/min
+#ifdef TARGET_OS_MAC
+#include <SDL2/SDL.h>
+#include <SDL2_mixer/SDL_mixer.h>
+#include <SDL2_image/SDL_image.h>
+#include <SDL2_ttf/SDL_ttf.h>
+#elif _WIN64
 #include <SDL.h>
 #include <SDL_mixer.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#elif _WIN32
+#include <SDL.h>
+#include <SDL_mixer.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#endif
 #include "GTDPlayer.h"
 #include "GTDUnit.h"
 #include "GTDMap.h"

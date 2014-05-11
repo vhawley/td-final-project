@@ -5,7 +5,13 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#ifdef TARGET_OS_MAC
+#include <SDL2/SDL.h>
+#elif _WIN64
 #include <SDL.h>
+#elif _WIN32
+#include <SDL.h>
+#endif
 #include "GTDRect.h"
 #include "GTDUnit.h"
 #include "GTDProjectile.h"

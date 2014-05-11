@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>F11CA005-C072-4131-8AE5-069A95487D33</string>
+	<key>IDESourceControlProjectName</key>
+	<string>GreenTD</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>1438ABBB-BFAA-45A9-B3DB-AEE1E7635004</key>
+		<string>https://github.com/vtor67/td-final-project.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>GreenTD.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>1438ABBB-BFAA-45A9-B3DB-AEE1E7635004</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/vtor67/td-final-project.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>1438ABBB-BFAA-45A9-B3DB-AEE1E7635004</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>1438ABBB-BFAA-45A9-B3DB-AEE1E7635004</string>
+			<key>IDESourceControlWCCName</key>
+			<string>td-final-project</string>
+		</dict>
+	</array>
+</dict>
+</plist>

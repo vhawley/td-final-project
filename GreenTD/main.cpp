@@ -2,8 +2,16 @@
 #include <math.h>
 #include <time.h>
 #include <string>
+#ifdef TARGET_OS_MAC
+#include <SDL2/SDL.h>
+#include <SDL2_mixer/SDL_mixer.h>
+#elif _WIN64
 #include <SDL.h>
 #include <SDL_mixer.h>
+#elif _WIN32
+#include <SDL.h>
+#include <SDL_mixer.h>
+#endif
 #include "GTDGame.h"
 
 int main(int argc, char **argv)

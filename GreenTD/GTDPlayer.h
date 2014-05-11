@@ -4,7 +4,13 @@
 #include <string>
 #include <vector>
 #include <map>
+#ifdef TARGET_OS_MAC
+#include <SDL2/SDL.h>
+#elif _WIN64
 #include <SDL.h>
+#elif _WIN32
+#include <SDL.h>
+#endif
 
 using namespace std;
 
